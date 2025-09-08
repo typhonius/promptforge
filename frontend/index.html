@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PromptForge - Project Management & Time Tracking</title>
+    <link rel="stylesheet" href="src/styles/main.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-brand">
+                    <i class="fas fa-project-diagram"></i>
+                    <span>PromptForge</span>
+                </div>
+                <div class="nav-menu">
+                    <a href="#" class="nav-link active" data-page="dashboard">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                    <a href="#" class="nav-link" data-page="time-tracking">
+                        <i class="fas fa-clock"></i> Time Tracking
+                    </a>
+                    <a href="#" class="nav-link" data-page="projects">
+                        <i class="fas fa-project-diagram"></i> Projects
+                    </a>
+                    <a href="#" class="nav-link" data-page="team">
+                        <i class="fas fa-users"></i> Team
+                    </a>
+                    <a href="#" class="nav-link" data-page="reports">
+                        <i class="fas fa-chart-bar"></i> Reports
+                    </a>
+                    <button id="logout-btn" class="nav-logout">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Page -->
+            <div id="dashboard-page" class="page active">
+                <div class="page-header">
+                    <h1><i class="fas fa-tachometer-alt"></i> Dashboard</h1>
+                    <p>Overview of projects, team capacity, and key metrics</p>
+                </div>
+                
+                <div class="dashboard-grid">
+                    <!-- Key Metrics Cards -->
+                    <div class="metrics-row">
+                        <div class="metric-card">
+                            <div class="metric-icon green">
+                                <i class="fas fa-project-diagram"></i>
+                            </div>
+                            <div class="metric-content">
+                                <h3 id="total-projects">-</h3>
+                                <p>Active Projects</p>
+                            </div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <div class="metric-icon blue">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="metric-content">
+                                <h3 id="team-utilization">-</h3>
+                                <p>Team Utilization</p>
+                            </div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <div class="metric-icon orange">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <div class="metric-content">
+                                <h3 id="total-arr">-</h3>
+                                <p>Total ARR</p>
+                            </div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <div class="metric-icon red">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="metric-content">
+                                <h3 id="arr-at-risk">-</h3>
+                                <p>ARR at Risk</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Project Health Overview -->
+                    <div class="dashboard-section">
+                        <h2><i class="fas fa-heartbeat"></i> Project Health</h2>
+                        <div id="project-health-overview" class="project-health-grid">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Activity -->
+                    <div class="dashboard-section">
+                        <h2><i class="fas fa-history"></i> Recent Activity</h2>
+                        <div id="recent-activity" class="activity-list">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Time Tracking Page -->
+            <div id="time-tracking-page" class="page">
+                <div class="page-header">
+                    <h1><i class="fas fa-clock"></i> Time Tracking</h1>
+                    <div class="page-actions">
+                        <select id="user-select" class="form-select">
+                            <option value="">Select Team Member</option>
+                        </select>
+                        <input type="week" id="week-picker" class="form-input">
+                    </div>
+                </div>
+                
+                <div id="time-tracking-content">
+                    <!-- Week view will be populated here -->
+                </div>
+            </div>
+
+            <!-- Projects Page -->
+            <div id="projects-page" class="page">
+                <div class="page-header">
+                    <h1><i class="fas fa-project-diagram"></i> Projects</h1>
+                    <div class="page-actions">
+                        <button id="add-project-btn" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Add Project
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="projects-filters">
+                    <select id="status-filter" class="form-select">
+                        <option value="">All Statuses</option>
+                        <option value="in_progress">In Progress</option>
+                        <option value="completed">Completed</option>
+                        <option value="on_hold">On Hold</option>
+                    </select>
+                    
+                    <select id="health-filter" class="form-select">
+                        <option value="">All Health</option>
+                        <option value="green">Green</option>
+                        <option value="yellow">Yellow</option>
+                        <option value="red">Red</option>
+                    </select>
+                </div>
+                
+                <div id="projects-list" class="projects-grid">
+                    <!-- Projects will be populated here -->
+                </div>
+            </div>
+
+            <!-- Team Page -->
+            <div id="team-page" class="page">
+                <div class="page-header">
+                    <h1><i class="fas fa-users"></i> Team Management</h1>
+                    <div class="page-actions">
+                        <button id="add-team-member-btn" class="btn btn-primary">
+                            <i class="fas fa-user-plus"></i> Add Team Member
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="team-list" class="team-grid">
+                    <!-- Team members will be populated here -->
+                </div>
+            </div>
+
+            <!-- Reports Page -->
+            <div id="reports-page" class="page">
+                <div class="page-header">
+                    <h1><i class="fas fa-chart-bar"></i> Reports</h1>
+                    <div class="page-actions">
+                        <input type="date" id="report-start-date" class="form-input">
+                        <input type="date" id="report-end-date" class="form-input">
+                        <button id="generate-report-btn" class="btn btn-primary">
+                            <i class="fas fa-chart-line"></i> Generate Report
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="reports-content">
+                    <!-- Reports will be populated here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Login Overlay -->
+    <div id="login-overlay" class="login-overlay">
+        <div class="login-form">
+            <div class="login-header">
+                <i class="fas fa-project-diagram"></i>
+                <h2>PromptForge</h2>
+                <p>Please enter your credentials</p>
+            </div>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" class="form-input" required placeholder="Enter password">
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                <div id="login-error" class="error-message" style="display: none;"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="modal-overlay" class="modal-overlay">
+        <div id="modal-content" class="modal-content">
+            <!-- Modal content will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Loading...</p>
+    </div>
+
+    <script type="module" src="src/utils/api.js"></script>
+    <script type="module" src="src/components/dashboard.js"></script>
+    <script type="module" src="src/components/simpleTimeTracking.js"></script>
+    <script type="module" src="src/components/projects.js"></script>
+    <script type="module" src="src/components/team.js"></script>
+    <script type="module" src="src/components/reports.js"></script>
+    <script type="module" src="src/utils/app.js"></script>
+</body>
+</html>
