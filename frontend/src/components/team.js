@@ -125,34 +125,59 @@ class TeamComponent {
         const startDate = startOfWeek.toISOString().split('T')[0];
         const endDate = endOfWeek.toISOString().split('T')[0];
 
-        for (const user of this.users) {
-            try {
-                // Get user's time summary for this week
-                const timeSummary = await api.getUserTimeSummary(user.id, startDate, endDate);
+        try {
+            // Get all projects once
+            const allProjects = await api.getProjects({});
 
-                // Get user's projects (projects they own)
-                const projects = await api.getProjects({});
+            for (const user of this.users) {
+                try {
+                    // Get user's time summary for this week
+                    const timeSummary = await api.getUserTimeSummary(user.id, startDate, endDate);
 
-                // Calculate total hours for the week
-                const totalHours = timeSummary.reduce((sum, project) => sum + parseFloat(project.total_hours || 0), 0);
+                    // Filter projects where this user is assigned (tier1, tier2, or tier3)
+                    const userProjects = allProjects.filter(project => {
+                        // Check if user is tier1 or tier2 owner
+                        if (project.tier1_owner_id === user.id || project.tier2_owner_id === user.id) {
+                            return true;
+                        }
 
-                // Update the stats display
-                const statsContainer = document.getElementById(`team-stats-${user.id}`);
-                if (statsContainer) {
-                    statsContainer.innerHTML = `
-                        <div class="team-stat">
-                            <div class="team-stat-value">${projects.length}</div>
-                            <div class="team-stat-label">Projects</div>
-                        </div>
-                        <div class="team-stat">
-                            <div class="team-stat-value">${totalHours.toFixed(1)}</div>
-                            <div class="team-stat-label">Hours (Week)</div>
-                        </div>
-                    `;
+                        // Check if user is in tier3_owners array
+                        if (project.tier3_owners) {
+                            try {
+                                const tier3Owners = JSON.parse(project.tier3_owners);
+                                return Array.isArray(tier3Owners) && tier3Owners.includes(user.id);
+                            } catch (e) {
+                                // If JSON parsing fails, ignore tier3_owners
+                                return false;
+                            }
+                        }
+
+                        return false;
+                    });
+
+                    // Calculate total hours for the week
+                    const totalHours = timeSummary.reduce((sum, project) => sum + parseFloat(project.total_hours || 0), 0);
+
+                    // Update the stats display
+                    const statsContainer = document.getElementById(`team-stats-${user.id}`);
+                    if (statsContainer) {
+                        statsContainer.innerHTML = `
+                            <div class="team-stat">
+                                <div class="team-stat-value">${userProjects.length}</div>
+                                <div class="team-stat-label">Projects</div>
+                            </div>
+                            <div class="team-stat">
+                                <div class="team-stat-value">${totalHours.toFixed(1)}</div>
+                                <div class="team-stat-label">Hours (Week)</div>
+                            </div>
+                        `;
+                    }
+                } catch (error) {
+                    console.error(`Failed to load stats for user ${user.id}:`, error);
                 }
-            } catch (error) {
-                console.error(`Failed to load stats for user ${user.id}:`, error);
             }
+        } catch (error) {
+            console.error('Failed to load projects:', error);
         }
     }
 
