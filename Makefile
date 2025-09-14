@@ -23,18 +23,18 @@ logs:
 
 # Safely rebuild frontend only (preserves database)
 rebuild-frontend:
-	@echo "🔄 Rebuilding frontend container (database will be preserved)..."
+	@echo "🔄 Rebuilding frontend container from scratch (database will be preserved)..."
 	docker compose stop frontend
 	docker compose rm -f frontend
-	docker compose build frontend
+	docker compose build --no-cache frontend
 	docker compose up -d frontend
 	@echo "✅ Frontend rebuilt successfully!"
 
 # Safely rebuild backend only (preserves database)
 rebuild-backend:
-	@echo "🔄 Rebuilding backend container (database will be preserved)..."
+	@echo "🔄 Rebuilding backend container from scratch (database will be preserved)..."
 	docker compose stop backend
 	docker compose rm -f backend
-	docker compose build backend
+	docker compose build --no-cache backend
 	docker compose up -d backend
 	@echo "✅ Backend rebuilt successfully!"
