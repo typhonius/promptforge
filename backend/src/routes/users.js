@@ -26,11 +26,11 @@ router.get('/:id', async (req, res) => {
       FROM users
       WHERE id = $1
     `, [id]);
-    
+
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'User not found' });
     }
-    
+
     res.json(result.rows[0]);
   } catch (error) {
     console.error('Error fetching user:', error);
@@ -42,17 +42,17 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const { first_name, last_name, email, tier } = req.body;
-    
+
     if (!first_name || !last_name) {
       return res.status(400).json({ error: 'first_name and last_name are required' });
     }
-    
+
     const result = await db.query(`
       INSERT INTO users (first_name, last_name, email, tier, is_active)
       VALUES ($1, $2, $3, $4, $5)
       RETURNING id, first_name, last_name, email, tier, is_active, created_at, updated_at
     `, [first_name, last_name, email, tier || 2, true]);
-    
+
     res.status(201).json(result.rows[0]);
   } catch (error) {
     console.error('Error creating user:', error);
@@ -69,9 +69,9 @@ router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const { first_name, last_name, email, is_active } = req.body;
-    
+
     const result = await db.query(`
-      UPDATE users 
+      UPDATE users
       SET first_name = COALESCE($1, first_name),
           last_name = COALESCE($2, last_name),
           email = COALESCE($3, email),
@@ -80,11 +80,11 @@ router.put('/:id', async (req, res) => {
       WHERE id = $5
       RETURNING id, first_name, last_name, email, is_active, created_at, updated_at
     `, [first_name, last_name, email, is_active, id]);
-    
+
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'User not found' });
     }
-    
+
     res.json(result.rows[0]);
   } catch (error) {
     console.error('Error updating user:', error);
@@ -96,18 +96,18 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    
+
     const result = await db.query(`
-      UPDATE users 
+      UPDATE users
       SET is_active = false, updated_at = CURRENT_TIMESTAMP
       WHERE id = $1
       RETURNING id, first_name, last_name, email, is_active
     `, [id]);
-    
+
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'User not found' });
     }
-    
+
     res.json({ message: 'User deactivated successfully', user: result.rows[0] });
   } catch (error) {
     console.error('Error deactivating user:', error);
@@ -120,7 +120,7 @@ router.get('/:id/time-summary', async (req, res) => {
   try {
     const { id } = req.params;
     const { start_date, end_date } = req.query;
-    
+
     // For simplified tracking, we just return total hours per day
     let query = `
       SELECT
@@ -130,23 +130,23 @@ router.get('/:id/time-summary', async (req, res) => {
       FROM time_entries te
       WHERE te.user_id = $1
     `;
-    
+
     const params = [id];
-    
+
     if (start_date) {
       query += ` AND te.entry_date >= $${params.length + 1}`;
       params.push(start_date);
     }
-    
+
     if (end_date) {
       query += ` AND te.entry_date <= $${params.length + 1}`;
       params.push(end_date);
     }
-    
+
     query += `
       ORDER BY te.entry_date DESC
     `;
-    
+
     const result = await db.query(query, params);
     res.json(result.rows);
   } catch (error) {

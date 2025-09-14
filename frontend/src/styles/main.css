@@ -436,6 +436,53 @@ body {
     border-top: 1px solid #e2e8f0;
 }
 
+/* PTO/Sick Day Styling */
+.day-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    align-items: center;
+    width: 100%;
+}
+
+.pto-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+    color: #64748b;
+    cursor: pointer;
+    margin-top: 0.25rem;
+}
+
+.pto-checkbox input[type="checkbox"] {
+    margin: 0;
+    cursor: pointer;
+}
+
+.pto-day {
+    background-color: #fef2f2 !important;
+    border-color: #fca5a5 !important;
+    opacity: 0.8;
+}
+
+.pto-day .hours-input:disabled {
+    background-color: #fee2e2;
+    color: #991b1b;
+    cursor: not-allowed;
+    border-color: #fca5a5;
+}
+
+.pto-day .pto-label {
+    color: #dc2626;
+    font-weight: 600;
+}
+
+.pto-day:hover {
+    border-color: #f87171 !important;
+    background-color: #fef2f2 !important;
+}
+
 /* Projects */
 .projects-filters {
     display: flex;
@@ -770,44 +817,44 @@ body {
         flex-direction: column;
         padding: 1rem;
     }
-    
+
     .nav-menu {
         width: 100%;
         justify-content: center;
         flex-wrap: wrap;
     }
-    
+
     .main-content {
         padding: 1rem;
     }
-    
+
     .page-header {
         flex-direction: column;
         align-items: flex-start;
     }
-    
+
     .metrics-row {
         grid-template-columns: 1fr;
     }
-    
+
     .projects-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .team-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .week-grid {
         grid-template-columns: 150px repeat(7, 1fr);
         font-size: 0.75rem;
     }
-    
+
     .daily-hours-grid {
         grid-template-columns: repeat(7, minmax(80px, 1fr));
         gap: 0.5rem;
     }
-    
+
     .week-cell {
         padding: 0.5rem;
         min-height: 60px;

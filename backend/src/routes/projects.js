@@ -6,7 +6,7 @@ const db = require('../database/connection');
 router.get('/', async (req, res) => {
   try {
     const { status, health, owner_id } = req.query;
-    
+
     let query = `
       SELECT
         p.*,
@@ -23,27 +23,27 @@ router.get('/', async (req, res) => {
       LEFT JOIN users u2 ON p.tier2_owner_id = u2.id
       WHERE 1=1
     `;
-    
+
     const params = [];
-    
+
     if (status) {
       query += ` AND p.status = $${params.length + 1}`;
       params.push(status);
     }
-    
+
     if (health) {
       query += ` AND p.health = $${params.length + 1}`;
       params.push(health);
     }
-    
+
     if (owner_id) {
       query += ` AND (p.tier1_owner_id = $${params.length + 1} OR p.tier2_owner_id = $${params.length + 1})`;
       params.push(owner_id);
       params.push(owner_id);
     }
-    
+
     query += ` ORDER BY p.created_at DESC`;
-    
+
     const result = await db.query(query, params);
     res.json(result.rows);
   } catch (error) {
@@ -66,14 +66,14 @@ router.get('/:id', async (req, res) => {
       LEFT JOIN users u2 ON p.tier2_owner_id = u2.id
       WHERE p.id = $1
     `, [id]);
-    
+
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Project not found' });
     }
-    
+
     // Get project notes
     const notesResult = await db.query(`
-      SELECT 
+      SELECT
         pn.*,
         u.first_name || ' ' || u.last_name as created_by_name
       FROM project_notes pn
@@ -81,18 +81,18 @@ router.get('/:id', async (req, res) => {
       WHERE pn.project_id = $1
       ORDER BY pn.created_at DESC
     `, [id]);
-    
+
     // Get custom fields
     const fieldsResult = await db.query(`
       SELECT field_name, field_value, field_type
       FROM project_custom_fields
       WHERE project_id = $1
     `, [id]);
-    
+
     const project = result.rows[0];
     project.notes = notesResult.rows;
     project.custom_fields = fieldsResult.rows;
-    
+
     res.json(project);
   } catch (error) {
     console.error('Error fetching project:', error);
@@ -116,7 +116,7 @@ router.post('/', async (req, res) => {
       start_date,
       template_id
     } = req.body;
-    
+
     // Handle both single tier3_owner_id (legacy) and tier3_owner_ids (new multiselect)
     let tier3_owners = null;
     if (tier3_owner_ids && Array.isArray(tier3_owner_ids)) {
@@ -124,11 +124,11 @@ router.post('/', async (req, res) => {
     } else if (tier3_owner_id) {
       tier3_owners = JSON.stringify([tier3_owner_id]);
     }
-    
+
     if (!project_name) {
       return res.status(400).json({ error: 'project_name is required' });
     }
-    
+
     const result = await db.query(`
       INSERT INTO projects (
         project_name, tier1_owner_id, tier2_owner_id, tier3_owners, status, health, arr_value,
@@ -137,7 +137,7 @@ router.post('/', async (req, res) => {
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
       RETURNING *
     `, [project_name, tier1_owner_id, tier2_owner_id, tier3_owners, status, health, arr_value, close_date, start_date, template_id]);
-    
+
     // Add initial health history entry
     if (result.rows[0]) {
       await db.query(`
@@ -145,7 +145,7 @@ router.post('/', async (req, res) => {
         VALUES ($1, $2, $3, $4)
       `, [result.rows[0].id, health, tier2_owner_id || tier1_owner_id, 'Project created']);
     }
-    
+
     res.status(201).json(result.rows[0]);
   } catch (error) {
     console.error('Error creating project:', error);
@@ -175,7 +175,7 @@ router.put('/:id', async (req, res) => {
       changed_by,
       health_change_reason
     } = req.body;
-    
+
     // Handle both single tier3_owner_id (legacy) and tier3_owner_ids (new multiselect)
     let tier3_owners = null;
     if (tier3_owner_ids && Array.isArray(tier3_owner_ids)) {
@@ -183,13 +183,13 @@ router.put('/:id', async (req, res) => {
     } else if (tier3_owner_id) {
       tier3_owners = JSON.stringify([tier3_owner_id]);
     }
-    
+
     // Get current project to check for health changes
     const currentProject = await db.query('SELECT health FROM projects WHERE id = $1', [id]);
     if (currentProject.rows.length === 0) {
       return res.status(404).json({ error: 'Project not found' });
     }
-    
+
     const result = await db.query(`
       UPDATE projects
       SET
@@ -210,7 +210,7 @@ router.put('/:id', async (req, res) => {
       WHERE id = $14
       RETURNING *
     `, [project_name, tier1_owner_id, tier2_owner_id, tier3_owners, status, health, arr_value, close_date, start_date, risk_description, ask_description, impact_description, is_closed, id]);
-    
+
     // Add health history entry if health changed
     if (health && health !== currentProject.rows[0].health) {
       await db.query(`
@@ -218,7 +218,7 @@ router.put('/:id', async (req, res) => {
         VALUES ($1, $2, $3, $4)
       `, [id, health, changed_by, health_change_reason || 'Health status updated']);
     }
-    
+
     res.json(result.rows[0]);
   } catch (error) {
     console.error('Error updating project:', error);
@@ -230,13 +230,13 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    
+
     const result = await db.query('DELETE FROM projects WHERE id = $1 RETURNING *', [id]);
-    
+
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Project not found' });
     }
-    
+
     res.json({ message: 'Project deleted successfully', project: result.rows[0] });
   } catch (error) {
     console.error('Error deleting project:', error);
@@ -249,17 +249,17 @@ router.post('/:id/notes', async (req, res) => {
   try {
     const { id } = req.params;
     const { note_text, created_by } = req.body;
-    
+
     if (!note_text) {
       return res.status(400).json({ error: 'note_text is required' });
     }
-    
+
     const result = await db.query(`
       INSERT INTO project_notes (project_id, note_text, created_by)
       VALUES ($1, $2, $3)
       RETURNING *
     `, [id, note_text, created_by]);
-    
+
     res.status(201).json(result.rows[0]);
   } catch (error) {
     console.error('Error adding project note:', error);
@@ -271,9 +271,9 @@ router.post('/:id/notes', async (req, res) => {
 router.get('/:id/health-history', async (req, res) => {
   try {
     const { id } = req.params;
-    
+
     const result = await db.query(`
-      SELECT 
+      SELECT
         phh.*,
         u.first_name || ' ' || u.last_name as changed_by_name
       FROM project_health_history phh
@@ -281,7 +281,7 @@ router.get('/:id/health-history', async (req, res) => {
       WHERE phh.project_id = $1
       ORDER BY phh.created_at DESC
     `, [id]);
-    
+
     res.json(result.rows);
   } catch (error) {
     console.error('Error fetching project health history:', error);
@@ -294,9 +294,9 @@ router.get('/:id/time-summary', async (req, res) => {
   try {
     const { id } = req.params;
     const { start_date, end_date } = req.query;
-    
+
     let query = `
-      SELECT 
+      SELECT
         u.first_name || ' ' || u.last_name as user_name,
         0 as total_hours,
         0 as days_worked
@@ -304,24 +304,24 @@ router.get('/:id/time-summary', async (req, res) => {
       WHERE u.is_active = true
       LIMIT 0
     `;
-    
+
     const params = [id];
-    
+
     if (start_date) {
       query += ` AND te.entry_date >= $${params.length + 1}`;
       params.push(start_date);
     }
-    
+
     if (end_date) {
       query += ` AND te.entry_date <= $${params.length + 1}`;
       params.push(end_date);
     }
-    
+
     query += `
       GROUP BY u.id, u.first_name, u.last_name
       ORDER BY total_hours DESC
     `;
-    
+
     const result = await db.query(query, params);
     res.json(result.rows);
   } catch (error) {

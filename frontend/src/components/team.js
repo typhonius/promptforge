@@ -27,7 +27,7 @@ class TeamComponent {
             if (!api.isAuthenticated()) {
                 throw new Error('Authentication required');
             }
-            
+
             this.users = await api.getUsers();
             this.renderTeam();
         } catch (error) {
@@ -66,14 +66,14 @@ class TeamComponent {
                     <div class="team-avatar">
                         ${initials}
                     </div>
-                    
+
                     <div class="team-name">${user.first_name} ${user.last_name}</div>
                     <div class="team-email">${user.email || 'No email provided'}</div>
-                    
+
                     <div class="team-status">
                         <span class="status-badge ${statusClass}">${statusText}</span>
                     </div>
-                    
+
                     <div class="team-meta">
                         <div class="meta-item">
                             <span class="meta-label">User ID:</span>
@@ -84,7 +84,7 @@ class TeamComponent {
                             <span class="meta-value">${formatDate(user.created_at)}</span>
                         </div>
                     </div>
-                    
+
                     <div class="team-stats" id="team-stats-${user.id}">
                         <div class="team-stat">
                             <div class="team-stat-value">-</div>
@@ -95,14 +95,14 @@ class TeamComponent {
                             <div class="team-stat-label">Hours (Week)</div>
                         </div>
                     </div>
-                    
+
                     <div class="team-actions" onclick="event.stopPropagation()">
                         <button class="btn btn-sm btn-secondary" onclick="team.editTeamMember(${user.id})">
                             <i class="fas fa-edit"></i> Edit
                         </button>
-                        <button class="btn btn-sm ${user.is_active ? 'btn-warning' : 'btn-success'}" 
+                        <button class="btn btn-sm ${user.is_active ? 'btn-warning' : 'btn-success'}"
                                 onclick="team.toggleTeamMemberStatus(${user.id})">
-                            <i class="fas ${user.is_active ? 'fa-pause' : 'fa-play'}"></i> 
+                            <i class="fas ${user.is_active ? 'fa-pause' : 'fa-play'}"></i>
                             ${user.is_active ? 'Deactivate' : 'Activate'}
                         </button>
                     </div>
@@ -129,13 +129,13 @@ class TeamComponent {
             try {
                 // Get user's time summary for this week
                 const timeSummary = await api.getUserTimeSummary(user.id, startDate, endDate);
-                
+
                 // Get user's projects (projects they own)
                 const projects = await api.getProjects({});
-                
+
                 // Calculate total hours for the week
                 const totalHours = timeSummary.reduce((sum, project) => sum + parseFloat(project.total_hours || 0), 0);
-                
+
                 // Update the stats display
                 const statsContainer = document.getElementById(`team-stats-${user.id}`);
                 if (statsContainer) {
@@ -163,7 +163,7 @@ class TeamComponent {
             const errorMessage = isAuthError
                 ? 'Please log in to view team members.'
                 : 'There was an error loading the team members. Please try again.';
-            
+
             container.innerHTML = `
                 <div class="text-center" style="grid-column: 1 / -1; padding: 3rem; color: #ef4444;">
                     <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem;"></i>
@@ -183,13 +183,13 @@ class TeamComponent {
         try {
             showLoading();
             const user = await api.getUser(userId);
-            
+
             // Get additional data
             const [timeSummary, projects] = await Promise.all([
                 api.getUserTimeSummary(userId),
                 api.getProjects({ owner_id: userId })
             ]);
-            
+
             this.showTeamMemberDetailsModal(user, timeSummary, projects);
         } catch (error) {
             console.error('Failed to load team member details:', error);
@@ -202,7 +202,7 @@ class TeamComponent {
         const initials = `${user.first_name.charAt(0)}${user.last_name.charAt(0)}`.toUpperCase();
         const statusClass = user.is_active ? 'active' : 'inactive';
         const statusText = user.is_active ? 'Active' : 'Inactive';
-        
+
         const totalHours = timeSummary.reduce((sum, project) => sum + parseFloat(project.total_hours || 0), 0);
         const activeProjects = projects.filter(p => p.status === 'in_progress').length;
 
@@ -218,7 +218,7 @@ class TeamComponent {
                         <span class="status-badge ${statusClass}">${statusText}</span>
                     </div>
                 </div>
-                
+
                 <div class="team-member-stats-grid">
                     <div class="stat-card">
                         <div class="stat-icon">
@@ -229,7 +229,7 @@ class TeamComponent {
                             <div class="stat-label">Total Projects</div>
                         </div>
                     </div>
-                    
+
                     <div class="stat-card">
                         <div class="stat-icon">
                             <i class="fas fa-tasks"></i>
@@ -239,7 +239,7 @@ class TeamComponent {
                             <div class="stat-label">Active Projects</div>
                         </div>
                     </div>
-                    
+
                     <div class="stat-card">
                         <div class="stat-icon">
                             <i class="fas fa-clock"></i>
@@ -249,7 +249,7 @@ class TeamComponent {
                             <div class="stat-label">Total Hours</div>
                         </div>
                     </div>
-                    
+
                     <div class="stat-card">
                         <div class="stat-icon">
                             <i class="fas fa-calendar"></i>
@@ -298,7 +298,7 @@ class TeamComponent {
                 .team-member-details {
                     max-width: 600px;
                 }
-                
+
                 .team-member-header {
                     display: flex;
                     align-items: center;
@@ -307,7 +307,7 @@ class TeamComponent {
                     padding-bottom: 1rem;
                     border-bottom: 1px solid #e2e8f0;
                 }
-                
+
                 .team-avatar-large {
                     width: 80px;
                     height: 80px;
@@ -320,17 +320,17 @@ class TeamComponent {
                     color: white;
                     font-weight: bold;
                 }
-                
+
                 .team-member-info h3 {
                     margin: 0 0 0.5rem 0;
                     color: #1e293b;
                 }
-                
+
                 .team-member-email {
                     color: #64748b;
                     margin: 0 0 0.5rem 0;
                 }
-                
+
                 .status-badge {
                     padding: 0.25rem 0.75rem;
                     border-radius: 20px;
@@ -338,24 +338,24 @@ class TeamComponent {
                     font-weight: 600;
                     text-transform: uppercase;
                 }
-                
+
                 .status-badge.active {
                     background: #dcfce7;
                     color: #166534;
                 }
-                
+
                 .status-badge.inactive {
                     background: #fee2e2;
                     color: #991b1b;
                 }
-                
+
                 .team-member-stats-grid {
                     display: grid;
                     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
                     gap: 1rem;
                     margin-bottom: 2rem;
                 }
-                
+
                 .stat-card {
                     background: #f8fafc;
                     padding: 1rem;
@@ -364,7 +364,7 @@ class TeamComponent {
                     align-items: center;
                     gap: 0.75rem;
                 }
-                
+
                 .stat-icon {
                     width: 40px;
                     height: 40px;
@@ -375,37 +375,37 @@ class TeamComponent {
                     justify-content: center;
                     color: white;
                 }
-                
+
                 .stat-value {
                     font-size: 1.25rem;
                     font-weight: 700;
                     color: #1e293b;
                 }
-                
+
                 .stat-label {
                     font-size: 0.75rem;
                     color: #64748b;
                     text-transform: uppercase;
                 }
-                
+
                 .team-member-projects,
                 .team-member-time {
                     margin-top: 1.5rem;
                 }
-                
+
                 .team-member-projects h4,
                 .team-member-time h4 {
                     margin-bottom: 1rem;
                     color: #374151;
                 }
-                
+
                 .projects-list,
                 .time-summary-list {
                     display: flex;
                     flex-direction: column;
                     gap: 0.5rem;
                 }
-                
+
                 .project-item,
                 .time-entry {
                     display: flex;
@@ -415,24 +415,24 @@ class TeamComponent {
                     background: #f8fafc;
                     border-radius: 6px;
                 }
-                
+
                 .project-info {
                     display: flex;
                     flex-direction: column;
                     gap: 0.25rem;
                 }
-                
+
                 .project-name {
                     font-weight: 600;
                     color: #374151;
                 }
-                
+
                 .project-status {
                     font-size: 0.75rem;
                     color: #6b7280;
                     text-transform: capitalize;
                 }
-                
+
                 .time-hours {
                     font-weight: 600;
                     color: #3b82f6;
@@ -472,23 +472,23 @@ class TeamComponent {
                         <option value="3">T3</option>
                     </select>
                 </div>
-                
+
                 <div class="form-group">
                     <label class="form-label">First Name *</label>
                     <input type="text" class="form-input" name="first_name" required>
                 </div>
-                
+
                 <div class="form-group">
                     <label class="form-label">Last Name *</label>
                     <input type="text" class="form-input" name="last_name" required>
                 </div>
-                
+
                 <div class="form-group">
                     <label class="form-label">Email</label>
                     <input type="email" class="form-input" name="email" placeholder="user@company.com">
                 </div>
             </form>
-            
+
             <style>
                 .form-help {
                     display: block;
@@ -575,30 +575,30 @@ class TeamComponent {
                     <input type="number" class="form-input" value="${user.id}" disabled>
                     <small class="form-help">User ID cannot be changed</small>
                 </div>
-                
+
                 <div class="form-group">
                     <label class="form-label">First Name *</label>
                     <input type="text" class="form-input" name="first_name" value="${user.first_name}" required>
                 </div>
-                
+
                 <div class="form-group">
                     <label class="form-label">Last Name *</label>
                     <input type="text" class="form-input" name="last_name" value="${user.last_name}" required>
                 </div>
-                
+
                 <div class="form-group">
                     <label class="form-label">Email</label>
                     <input type="email" class="form-input" name="email" value="${user.email || ''}">
                 </div>
-                
+
                 <div class="form-group">
                     <label class="form-label">
-                        <input type="checkbox" name="is_active" ${user.is_active ? 'checked' : ''}> 
+                        <input type="checkbox" name="is_active" ${user.is_active ? 'checked' : ''}>
                         Active team member
                     </label>
                 </div>
             </form>
-            
+
             <style>
                 .form-help {
                     display: block;

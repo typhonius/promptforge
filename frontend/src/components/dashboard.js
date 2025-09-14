@@ -20,19 +20,19 @@ class DashboardComponent {
     async loadDashboardData() {
         try {
             console.log('Loading dashboard data...');
-            
+
             // Ensure we're authenticated before making the request
             if (!api.isAuthenticated()) {
                 throw new Error('Authentication required');
             }
-            
+
             // Get last week's data for the executive report
             const endDate = new Date();
             const startDate = new Date();
             startDate.setDate(startDate.getDate() - 7);
 
             console.log('Fetching executive report from', startDate.toISOString().split('T')[0], 'to', endDate.toISOString().split('T')[0]);
-            
+
             this.executiveData = await api.getExecutiveReport(
                 startDate.toISOString().split('T')[0],
                 endDate.toISOString().split('T')[0]
@@ -51,7 +51,7 @@ class DashboardComponent {
 
     renderMetrics() {
         console.log('Rendering metrics with data:', this.executiveData);
-        
+
         if (!this.executiveData) {
             console.log('No executive data available for metrics');
             return;
@@ -98,7 +98,7 @@ class DashboardComponent {
             const healthColor = getHealthColor(project.health);
             const arrDisplay = project.arr_value ? formatCurrency(project.arr_value) : '';
             const closeDate = project.close_date ? formatDate(project.close_date) : '';
-            
+
             return `
                 <div class="project-health-item ${healthColor}" onclick="dashboard.viewProject(${project.id})">
                     <div class="project-info">
@@ -126,7 +126,7 @@ class DashboardComponent {
 
         if (this.executiveData) {
             const { project_health, capacity_analysis } = this.executiveData;
-            
+
             // Add capacity-related activity
             if (capacity_analysis.utilization_percentage < 70) {
                 activities.push({
@@ -202,7 +202,7 @@ class DashboardComponent {
             const errorMessage = isAuthError
                 ? 'Please log in to view dashboard data.'
                 : 'Failed to load dashboard data';
-            
+
             container.innerHTML = `
                 <div class="text-center" style="padding: 2rem; color: #ef4444;">
                     <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 1rem;"></i>
@@ -221,7 +221,7 @@ class DashboardComponent {
         const teamUtilizationEl = document.getElementById('team-utilization');
         const totalArrEl = document.getElementById('total-arr');
         const arrAtRiskEl = document.getElementById('arr-at-risk');
-        
+
         if (totalProjectsEl) totalProjectsEl.textContent = '-';
         if (teamUtilizationEl) teamUtilizationEl.textContent = '-';
         if (totalArrEl) totalArrEl.textContent = '-';
@@ -245,7 +245,7 @@ class DashboardComponent {
         const arrDisplay = project.arr_value ? formatCurrency(project.arr_value) : 'Not specified';
         const startDate = project.start_date ? formatDate(project.start_date) : 'Not set';
         const closeDate = project.close_date ? formatDate(project.close_date) : 'Not set';
-        
+
         // Check if project is closed based on close date
         const isClosedByDate = project.close_date && new Date(project.close_date) < new Date();
         const displayStatus = isClosedByDate ? 'Closed' : project.status;
@@ -256,7 +256,7 @@ class DashboardComponent {
                     <h3>${project.project_name}</h3>
                     <div class="health-badge ${healthColor}">${project.health}</div>
                 </div>
-                
+
                 <div class="project-meta-grid">
                     <div class="meta-item">
                         <label>Tier 1:</label>
@@ -325,7 +325,7 @@ class DashboardComponent {
                     padding-bottom: 1rem;
                     border-bottom: 1px solid #e2e8f0;
                 }
-                
+
                 .project-meta-grid,
                 .custom-fields-grid {
                     display: grid;
@@ -333,63 +333,63 @@ class DashboardComponent {
                     gap: 1rem;
                     margin-bottom: 1.5rem;
                 }
-                
+
                 .meta-item {
                     display: flex;
                     flex-direction: column;
                     gap: 0.25rem;
                 }
-                
+
                 .meta-item label {
                     font-weight: 600;
                     color: #374151;
                     font-size: 0.875rem;
                 }
-                
+
                 .meta-item span {
                     color: #6b7280;
                 }
-                
+
                 .project-notes-section,
                 .custom-fields-section {
                     margin-top: 1.5rem;
                 }
-                
+
                 .project-notes-section h4,
                 .custom-fields-section h4 {
                     margin-bottom: 1rem;
                     color: #374151;
                 }
-                
+
                 .notes-list {
                     display: flex;
                     flex-direction: column;
                     gap: 1rem;
                 }
-                
+
                 .note-item {
                     background: #f8fafc;
                     padding: 1rem;
                     border-radius: 8px;
                     border-left: 3px solid #3b82f6;
                 }
-                
+
                 .note-header {
                     display: flex;
                     justify-content: space-between;
                     margin-bottom: 0.5rem;
                     font-size: 0.875rem;
                 }
-                
+
                 .note-author {
                     font-weight: 600;
                     color: #374151;
                 }
-                
+
                 .note-date {
                     color: #6b7280;
                 }
-                
+
                 .note-text {
                     color: #4b5563;
                     line-height: 1.5;

@@ -4,15 +4,22 @@ import { api, getWeekStart, getWeekDates, showLoading, hideLoading } from '../ut
 class SimpleTimeTrackingComponent {
     constructor() {
         this.currentUser = null;
-        this.currentWeek = getWeekStart();
+        this.currentWeek = getWeekStart(new Date());
         this.weekData = {};
         this.init();
     }
 
     init() {
         this.setupEventListeners();
-        this.loadUsers();
         this.setCurrentWeek();
+    }
+
+    // Method called when the page is initialized (user is authenticated)
+    async initializePage() {
+        await this.loadUsers();
+        if (this.currentUser) {
+            this.loadWeekView();
+        }
     }
 
     setupEventListeners() {
@@ -55,9 +62,10 @@ class SimpleTimeTrackingComponent {
     }
 
     navigateWeek(direction) {
-        const currentDate = new Date(this.currentWeek);
-        currentDate.setDate(currentDate.getDate() + (direction * 7));
-        this.currentWeek = getWeekStart(currentDate);
+        // Use timezone-safe date arithmetic
+        const currentDate = new Date(this.currentWeek + 'T00:00:00');
+        const newDate = new Date(currentDate.getTime() + (direction * 7 * 24 * 60 * 60 * 1000));
+        this.currentWeek = getWeekStart(newDate);
         this.setCurrentWeek();
         if (this.currentUser) {
             this.loadWeekView();
@@ -78,7 +86,7 @@ class SimpleTimeTrackingComponent {
         if (!userSelect) return;
 
         userSelect.innerHTML = '<option value="">Select Team Member</option>';
-        
+
         users.forEach(user => {
             if (user.is_active) {
                 const option = document.createElement('option');
@@ -100,23 +108,31 @@ class SimpleTimeTrackingComponent {
     }
 
     getWeekNumber(date) {
+        // ISO week numbering (Monday = start of week)
         const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-        const dayNum = d.getUTCDay() || 7;
-        d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+        const dayNum = d.getUTCDay() || 7; // Sunday = 7, Monday = 1
+        d.setUTCDate(d.getUTCDate() + 4 - dayNum); // Move to Thursday of the same week
         const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
         return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
     }
 
     getDateFromWeek(year, week) {
-        const date = new Date(year, 0, 1 + (week - 1) * 7);
-        const day = date.getDay();
-        const diff = date.getDate() - day + (day === 0 ? -6 : 1);
-        return new Date(date.setDate(diff));
+        // Create a date for January 4th of the given year (always in week 1)
+        const jan4 = new Date(year, 0, 4);
+        // Find the Monday of week 1
+        const jan4Day = jan4.getDay();
+        const daysToMonday = jan4Day === 0 ? -6 : 1 - jan4Day;
+        const firstMonday = new Date(jan4.getTime() + daysToMonday * 24 * 60 * 60 * 1000);
+
+        // Calculate the Monday of the requested week
+        const targetMonday = new Date(firstMonday.getTime() + (week - 1) * 7 * 24 * 60 * 60 * 1000);
+        return targetMonday;
     }
 
     async loadWeekView() {
         if (!this.currentUser || !this.currentWeek) return;
 
+        console.log('loadWeekView - this.currentWeek:', this.currentWeek);
         showLoading();
         try {
             const weekEnd = new Date(this.currentWeek);
@@ -129,11 +145,24 @@ class SimpleTimeTrackingComponent {
                 end_date: weekEnd.toISOString().split('T')[0]
             });
 
+            console.log('API Request:', {
+                user_id: this.currentUser,
+                start_date: this.currentWeek,
+                end_date: weekEnd.toISOString().split('T')[0]
+            });
+            console.log('API Response:', timeEntries);
+
             // Convert to simple format
             this.weekData = {};
             timeEntries.forEach(entry => {
-                this.weekData[entry.entry_date] = entry.hours;
+                // Extract just the date part (YYYY-MM-DD) from the ISO timestamp
+                const dateOnly = entry.entry_date.split('T')[0];
+                const hours = parseFloat(entry.hours);
+                // Convert negative hours (PTO) back to -1 for UI logic
+                this.weekData[dateOnly] = hours < 0 ? -1 : hours;
             });
+
+            console.log('Week Data:', this.weekData);
 
             this.renderWeekView();
         } catch (error) {
@@ -149,6 +178,8 @@ class SimpleTimeTrackingComponent {
         if (!container) return;
 
         const weekDates = getWeekDates(this.currentWeek);
+        console.log('Current week start:', this.currentWeek);
+        console.log('Week dates:', weekDates);
         const weekTotal = weekDates.reduce((sum, day) => sum + (parseFloat(this.weekData[day.date]) || 0), 0);
 
         container.innerHTML = `
@@ -158,10 +189,10 @@ class SimpleTimeTrackingComponent {
                         <button id="prev-week-btn" class="btn btn-secondary">
                             <i class="fas fa-chevron-left"></i> Previous Week
                         </button>
-                        <h3>Week of ${new Date(this.currentWeek).toLocaleDateString('en-US', { 
-                            month: 'long', 
-                            day: 'numeric', 
-                            year: 'numeric' 
+                        <h3>Week of ${new Date(weekDates[0].date).toLocaleDateString('en-US', {
+                            month: 'long',
+                            day: 'numeric',
+                            year: 'numeric'
                         })}</h3>
                         <button id="next-week-btn" class="btn btn-secondary">
                             Next Week <i class="fas fa-chevron-right"></i>
@@ -171,30 +202,46 @@ class SimpleTimeTrackingComponent {
                         <strong>Total: ${weekTotal.toFixed(1)} hours</strong>
                     </div>
                 </div>
-                
+
                 <div class="daily-hours-grid">
-                    ${weekDates.map(day => `
-                        <div class="day-entry">
+                    ${weekDates.map(day => {
+                        const hours = this.weekData[day.date] || 0;
+                        const isPTO = hours === -1; // Use -1 to indicate PTO/Sick
+                        return `
+                        <div class="day-entry ${isPTO ? 'pto-day' : ''}">
                             <label class="day-label">
                                 ${day.dayName}
                                 <span class="day-date">${day.dayNumber}</span>
                             </label>
-                            <input 
-                                type="number" 
-                                class="hours-input" 
-                                value="${this.weekData[day.date] || ''}" 
-                                step="0.5" 
-                                min="0" 
-                                max="24"
-                                data-date="${day.date}"
-                                placeholder="0"
-                                onchange="simpleTimeTracking.updateHours(this)"
-                            >
-                            <span class="hours-label">hours</span>
+                            <div class="day-inputs">
+                                <input
+                                    type="number"
+                                    class="hours-input"
+                                    value="${isPTO ? '' : (hours || '')}"
+                                    step="0.5"
+                                    min="0"
+                                    max="24"
+                                    data-date="${day.date}"
+                                    placeholder="0"
+                                    onchange="simpleTimeTracking.updateHours(this)"
+                                    ${isPTO ? 'disabled' : ''}
+                                >
+                                <span class="hours-label">hours</span>
+                                <label class="pto-checkbox">
+                                    <input
+                                        type="checkbox"
+                                        data-date="${day.date}"
+                                        ${isPTO ? 'checked' : ''}
+                                        onchange="simpleTimeTracking.togglePTO(this)"
+                                    >
+                                    <span class="pto-label">PTO/Sick</span>
+                                </label>
+                            </div>
                         </div>
-                    `).join('')}
+                        `;
+                    }).join('')}
                 </div>
-                
+
                 <div class="week-actions">
                     <button class="btn btn-primary" onclick="simpleTimeTracking.saveWeek()">
                         <i class="fas fa-save"></i> Save Week
@@ -213,13 +260,40 @@ class SimpleTimeTrackingComponent {
     updateHours(input) {
         const date = input.dataset.date;
         const hours = parseFloat(input.value) || 0;
-        
+
         this.weekData[date] = hours;
-        
-        // Update total display
+        this.updateWeekTotal();
+    }
+
+    togglePTO(checkbox) {
+        const date = checkbox.dataset.date;
+        const hoursInput = document.querySelector(`input.hours-input[data-date="${date}"]`);
+        const dayEntry = checkbox.closest('.day-entry');
+
+        if (checkbox.checked) {
+            // Mark as PTO/Sick
+            this.weekData[date] = -1; // Use -1 to indicate PTO
+            hoursInput.value = '';
+            hoursInput.disabled = true;
+            dayEntry.classList.add('pto-day');
+        } else {
+            // Remove PTO/Sick
+            this.weekData[date] = 0;
+            hoursInput.disabled = false;
+            dayEntry.classList.remove('pto-day');
+        }
+
+        this.updateWeekTotal();
+    }
+
+    updateWeekTotal() {
         const weekDates = getWeekDates(this.currentWeek);
-        const weekTotal = weekDates.reduce((sum, day) => sum + (parseFloat(this.weekData[day.date]) || 0), 0);
-        
+        // Only count positive hours (exclude PTO days which are -1)
+        const weekTotal = weekDates.reduce((sum, day) => {
+            const hours = parseFloat(this.weekData[day.date]) || 0;
+            return sum + (hours > 0 ? hours : 0);
+        }, 0);
+
         const totalElement = document.querySelector('.week-total strong');
         if (totalElement) {
             totalElement.textContent = `Total: ${weekTotal.toFixed(1)} hours`;
@@ -232,13 +306,21 @@ class SimpleTimeTrackingComponent {
         showLoading();
         try {
             const entries = [];
-            
+
             Object.entries(this.weekData).forEach(([date, hours]) => {
+                // Save regular hours (> 0) and PTO days (-1)
                 if (hours > 0) {
                     entries.push({
                         user_id: parseInt(this.currentUser),
                         entry_date: date,
                         hours: hours
+                    });
+                } else if (hours === -1) {
+                    // Save PTO as -8 hours in the database (standard work day)
+                    entries.push({
+                        user_id: parseInt(this.currentUser),
+                        entry_date: date,
+                        hours: -8
                     });
                 }
             });
@@ -247,7 +329,7 @@ class SimpleTimeTrackingComponent {
                 await api.bulkUpdateTimeEntries(entries);
                 this.showSuccess('Time entries saved successfully!');
             } else {
-                this.showSuccess('No hours to save.');
+                this.showSuccess('No entries to save.');
             }
 
         } catch (error) {

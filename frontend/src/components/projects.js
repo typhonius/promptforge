@@ -60,7 +60,7 @@ class ProjectsComponent {
             if (!api.isAuthenticated()) {
                 throw new Error('Authentication required');
             }
-            
+
             this.projects = await api.getProjects(this.filters);
             this.renderProjects();
         } catch (error) {
@@ -94,15 +94,15 @@ class ProjectsComponent {
             const arrDisplay = project.arr_value ? formatCurrency(project.arr_value) : '';
             const startDate = project.start_date ? formatDate(project.start_date) : '';
             const closeDate = project.close_date ? formatDate(project.close_date) : '';
-            
+
             // Check if project is closed based on close date
             const isClosedByDate = project.close_date && new Date(project.close_date) < new Date();
             const displayStatus = isClosedByDate ? 'Closed' : project.status;
-            
+
             // Get tier names
             const tier1Name = project.tier_1_name || '';
             const tier2Name = project.tier_2_name || '';
-            
+
             // Handle multiple tier 3 names
             let tier3Names = [];
             if (project.tier3_owners) {
@@ -116,7 +116,7 @@ class ProjectsComponent {
                     console.error('Error parsing tier3_owners:', e);
                 }
             }
-            
+
             const tier3Display = tier3Names.length > 0 ? tier3Names.join(', ') : '';
             const tierDisplay = [tier1Name, tier2Name, tier3Display].filter(name => name).join(' | ') || 'No tiers assigned';
 
@@ -131,7 +131,7 @@ class ProjectsComponent {
                         </div>
                         <div class="health-badge ${healthColor}">${project.health}</div>
                     </div>
-                    
+
                     <div class="project-meta">
                         <div class="project-status">
                             <i class="fas fa-info-circle"></i> ${displayStatus}
@@ -174,7 +174,7 @@ class ProjectsComponent {
             const errorMessage = isAuthError
                 ? 'Please log in to view projects.'
                 : 'There was an error loading the projects. Please try again.';
-            
+
             container.innerHTML = `
                 <div class="text-center" style="grid-column: 1 / -1; padding: 3rem; color: #ef4444;">
                     <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem;"></i>
@@ -207,7 +207,7 @@ class ProjectsComponent {
         const arrDisplay = project.arr_value ? formatCurrency(project.arr_value) : 'Not specified';
         const startDate = project.start_date ? formatDate(project.start_date) : 'Not set';
         const closeDate = project.close_date ? formatDate(project.close_date) : 'Not set';
-        
+
         // Check if project is closed based on close date
         const isClosedByDate = project.close_date && new Date(project.close_date) < new Date();
         const displayStatus = isClosedByDate ? 'Closed' : project.status;
@@ -218,7 +218,7 @@ class ProjectsComponent {
                     <h3>${project.project_name}</h3>
                     <div class="health-badge ${healthColor}">${project.health}</div>
                 </div>
-                
+
                 <div class="project-meta-grid">
                     <div class="meta-item">
                         <label>Tier 1:</label>
@@ -317,7 +317,7 @@ class ProjectsComponent {
                 .project-details-full {
                     max-width: 600px;
                 }
-                
+
                 .project-header-modal {
                     display: flex;
                     justify-content: space-between;
@@ -326,7 +326,7 @@ class ProjectsComponent {
                     padding-bottom: 1rem;
                     border-bottom: 1px solid #e2e8f0;
                 }
-                
+
                 .project-meta-grid,
                 .custom-fields-grid {
                     display: grid;
@@ -334,40 +334,40 @@ class ProjectsComponent {
                     gap: 1rem;
                     margin-bottom: 1.5rem;
                 }
-                
+
                 .meta-item {
                     display: flex;
                     flex-direction: column;
                     gap: 0.25rem;
                 }
-                
+
                 .meta-item label {
                     font-weight: 600;
                     color: #374151;
                     font-size: 0.875rem;
                 }
-                
+
                 .meta-item span {
                     color: #6b7280;
                 }
-                
+
                 .project-notes-section,
                 .custom-fields-section {
                     margin-top: 1.5rem;
                 }
-                
+
                 .section-header {
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
                     margin-bottom: 1rem;
                 }
-                
+
                 .section-header h4 {
                     margin: 0;
                     color: #374151;
                 }
-                
+
                 .notes-list {
                     display: flex;
                     flex-direction: column;
@@ -375,30 +375,30 @@ class ProjectsComponent {
                     max-height: 300px;
                     overflow-y: auto;
                 }
-                
+
                 .note-item {
                     background: #f8fafc;
                     padding: 1rem;
                     border-radius: 8px;
                     border-left: 3px solid #3b82f6;
                 }
-                
+
                 .note-header {
                     display: flex;
                     justify-content: space-between;
                     margin-bottom: 0.5rem;
                     font-size: 0.875rem;
                 }
-                
+
                 .note-author {
                     font-weight: 600;
                     color: #374151;
                 }
-                
+
                 .note-date {
                     color: #6b7280;
                 }
-                
+
                 .note-text {
                     color: #4b5563;
                     line-height: 1.5;
@@ -440,7 +440,7 @@ class ProjectsComponent {
                     <label class="form-label">Project Name *</label>
                     <input type="text" class="form-input" name="project_name" required>
                 </div>
-                
+
                 <div class="form-group">
                     <label class="form-label">Tier 1</label>
                     <select class="form-select" name="tier_1">
@@ -448,7 +448,7 @@ class ProjectsComponent {
                         ${userOptions}
                     </select>
                 </div>
-                
+
                 <div class="form-group">
                     <label class="form-label">Tier 2</label>
                     <select class="form-select" name="tier_2">
@@ -456,7 +456,7 @@ class ProjectsComponent {
                         ${userOptions}
                     </select>
                 </div>
-                
+
                 <div class="form-group">
                     <label class="form-label">Tier 3 (Multiple)</label>
                     <select class="form-select" name="tier_3" multiple style="min-height: 120px;">
@@ -464,7 +464,7 @@ class ProjectsComponent {
                     </select>
                     <small class="form-help">Hold Ctrl/Cmd to select multiple users</small>
                 </div>
-                
+
                 <div class="form-group">
                     <label class="form-label">Status</label>
                     <select class="form-select" name="status">
@@ -475,7 +475,7 @@ class ProjectsComponent {
                         <option value="cancelled">Cancelled</option>
                     </select>
                 </div>
-                
+
                 <div class="form-group">
                     <label class="form-label">Health Status</label>
                     <select class="form-select" name="health">
@@ -484,17 +484,17 @@ class ProjectsComponent {
                         <option value="red">Red</option>
                     </select>
                 </div>
-                
+
                 <div class="form-group">
                     <label class="form-label">ARR Value ($)</label>
                     <input type="number" class="form-input" name="arr_value" step="0.01" min="0">
                 </div>
-                
+
                 <div class="form-group">
                     <label class="form-label">Start Date</label>
                     <input type="date" class="form-input" name="start_date">
                 </div>
-                
+
                 <div class="form-group">
                     <label class="form-label">Close Date</label>
                     <input type="date" class="form-input" name="close_date">
@@ -620,7 +620,7 @@ class ProjectsComponent {
                     <label class="form-label">Project Name *</label>
                     <input type="text" class="form-input" name="project_name" value="${project.project_name}" required>
                 </div>
-                
+
                 <div class="form-group">
                     <label class="form-label">Tier 1</label>
                     <select class="form-select" name="tier_1">
@@ -628,7 +628,7 @@ class ProjectsComponent {
                         ${tier1Options}
                     </select>
                 </div>
-                
+
                 <div class="form-group">
                     <label class="form-label">Tier 2</label>
                     <select class="form-select" name="tier_2">
@@ -636,7 +636,7 @@ class ProjectsComponent {
                         ${tier2Options}
                     </select>
                 </div>
-                
+
                 <div class="form-group">
                     <label class="form-label">Tier 3 (Multiple)</label>
                     <select class="form-select" name="tier_3" multiple style="min-height: 120px;">
@@ -644,7 +644,7 @@ class ProjectsComponent {
                     </select>
                     <small class="form-help">Hold Ctrl/Cmd to select multiple users</small>
                 </div>
-                
+
                 <div class="form-group">
                     <label class="form-label">Status</label>
                     <select class="form-select" name="status">
@@ -655,7 +655,7 @@ class ProjectsComponent {
                         <option value="cancelled" ${project.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
                     </select>
                 </div>
-                
+
                 <div class="form-group">
                     <label class="form-label">Health Status</label>
                     <select class="form-select" name="health">
@@ -664,27 +664,27 @@ class ProjectsComponent {
                         <option value="red" ${project.health === 'red' ? 'selected' : ''}>Red</option>
                     </select>
                 </div>
-                
+
                 <div class="form-group">
                     <label class="form-label">Health Change Reason</label>
                     <input type="text" class="form-input" name="health_change_reason" placeholder="Reason for health status change">
                 </div>
-                
+
                 <div class="form-group">
                     <label class="form-label">ARR Value ($)</label>
                     <input type="number" class="form-input" name="arr_value" value="${project.arr_value || ''}" step="0.01" min="0">
                 </div>
-                
+
                 <div class="form-group">
                     <label class="form-label">Start Date</label>
                     <input type="date" class="form-input" name="start_date" value="${project.start_date || ''}">
                 </div>
-                
+
                 <div class="form-group">
                     <label class="form-label">Close Date</label>
                     <input type="date" class="form-input" name="close_date" value="${project.close_date || ''}">
                 </div>
-                
+
                 <div class="form-group">
                     <label class="form-label">
                         <input type="checkbox" name="is_closed" ${project.is_closed ? 'checked' : ''}>
@@ -763,10 +763,10 @@ class ProjectsComponent {
             <form id="add-note-form">
                 <div class="form-group">
                     <label class="form-label">Note *</label>
-                    <textarea class="form-textarea" name="note_text" rows="5" required 
+                    <textarea class="form-textarea" name="note_text" rows="5" required
                               placeholder="Enter project note or update..."></textarea>
                 </div>
-                
+
                 <div class="form-group">
                     <label class="form-label">Created By</label>
                     <select class="form-select" name="created_by">

@@ -6,15 +6,15 @@ const db = require('../database/connection');
 router.get('/executive', async (req, res) => {
   try {
     const { start_date, end_date } = req.query;
-    
+
     // Default to last week if no dates provided
     const defaultEndDate = new Date();
     const defaultStartDate = new Date();
     defaultStartDate.setDate(defaultStartDate.getDate() - 7);
-    
+
     const reportStartDate = start_date || defaultStartDate.toISOString().split('T')[0];
     const reportEndDate = end_date || defaultEndDate.toISOString().split('T')[0];
-    
+
     // Get project health summary (simplified - no project-specific hours)
     const projectsResult = await db.query(`
       SELECT
@@ -41,39 +41,45 @@ router.get('/executive', async (req, res) => {
         END,
         p.arr_value DESC NULLS LAST
     `);
-    
-    // Get capacity analysis
+
+    // Get capacity analysis with PTO-aware calculations
     const capacityResult = await db.query(`
-      SELECT 
+      SELECT
         u.id,
         u.first_name || ' ' || u.last_name as user_name,
-        COALESCE(SUM(te.hours), 0) as total_hours
+        COALESCE(SUM(CASE WHEN te.hours > 0 THEN te.hours ELSE 0 END), 0) as total_hours,
+        COALESCE(SUM(CASE WHEN te.hours < 0 THEN ABS(te.hours) ELSE 0 END), 0) as pto_hours
       FROM users u
-      LEFT JOIN time_entries te ON u.id = te.user_id 
-        AND te.entry_date >= $1 
+      LEFT JOIN time_entries te ON u.id = te.user_id
+        AND te.entry_date >= $1
         AND te.entry_date <= $2
       WHERE u.is_active = true
       GROUP BY u.id, u.first_name, u.last_name
       ORDER BY total_hours DESC
     `, [reportStartDate, reportEndDate]);
-    
-    // Calculate team metrics
-    const totalHours = capacityResult.rows.reduce((sum, user) => sum + parseFloat(user.total_hours), 0);
-    const activeUsers = capacityResult.rows.filter(user => parseFloat(user.total_hours) > 0).length;
-    const avgHours = activeUsers > 0 ? totalHours / activeUsers : 0;
-    const utilizationPct = avgHours > 0 ? (avgHours / 40) * 100 : 0; // Assuming 40h/week target
-    
+
+    // Calculate team metrics with PTO adjustment
+    const totalWorkHours = capacityResult.rows.reduce((sum, user) => sum + parseFloat(user.total_hours), 0);
+    const totalPtoHours = capacityResult.rows.reduce((sum, user) => sum + parseFloat(user.pto_hours), 0);
+    const activeUsers = capacityResult.rows.filter(user => parseFloat(user.total_hours) > 0 || parseFloat(user.pto_hours) > 0).length;
+    const avgHours = activeUsers > 0 ? totalWorkHours / activeUsers : 0;
+
+    // Calculate utilization: work_hours / (expected_hours - pto_hours)
+    const expectedHours = activeUsers * 40; // 40h/week per user
+    const availableHours = expectedHours - totalPtoHours;
+    const utilizationPct = availableHours > 0 ? (totalWorkHours / availableHours) * 100 : 0;
+
     // Group projects by health
     const healthGroups = {
       red: projectsResult.rows.filter(p => p.health === 'red'),
       yellow: projectsResult.rows.filter(p => p.health === 'yellow'),
       green: projectsResult.rows.filter(p => p.health === 'green')
     };
-    
+
     // Calculate ARR at risk
     const arrAtRisk = healthGroups.red.reduce((sum, p) => sum + (parseFloat(p.arr_value) || 0), 0);
     const totalArr = projectsResult.rows.reduce((sum, p) => sum + (parseFloat(p.arr_value) || 0), 0);
-    
+
     res.json({
       report_period: {
         start_date: reportStartDate,
@@ -89,7 +95,8 @@ router.get('/executive', async (req, res) => {
         total_arr: Math.round(totalArr)
       },
       capacity_analysis: {
-        total_hours: Math.round(totalHours * 10) / 10,
+        total_hours: Math.round(totalWorkHours * 10) / 10,
+        pto_hours: Math.round(totalPtoHours * 10) / 10,
         avg_hours_per_person: Math.round(avgHours * 10) / 10,
         utilization_percentage: Math.round(utilizationPct * 10) / 10,
         team_size: capacityResult.rows.length,
@@ -98,7 +105,7 @@ router.get('/executive', async (req, res) => {
       },
       generated_at: new Date().toISOString()
     });
-    
+
   } catch (error) {
     console.error('Error generating executive report:', error);
     res.status(500).json({ error: 'Failed to generate executive report' });
@@ -109,9 +116,9 @@ router.get('/executive', async (req, res) => {
 router.get('/project-health-trends', async (req, res) => {
   try {
     const { days = 30 } = req.query;
-    
+
     const result = await db.query(`
-      SELECT 
+      SELECT
         DATE(phh.created_at) as date,
         phh.health,
         COUNT(*) as count
@@ -120,7 +127,7 @@ router.get('/project-health-trends', async (req, res) => {
       GROUP BY DATE(phh.created_at), phh.health
       ORDER BY date DESC, phh.health
     `);
-    
+
     res.json(result.rows);
   } catch (error) {
     console.error('Error fetching health trends:', error);
@@ -132,11 +139,11 @@ router.get('/project-health-trends', async (req, res) => {
 router.get('/time-summary', async (req, res) => {
   try {
     const { start_date, end_date, group_by = 'user' } = req.query;
-    
+
     if (!start_date || !end_date) {
       return res.status(400).json({ error: 'start_date and end_date are required' });
     }
-    
+
     let query;
     if (group_by === 'project') {
       // For simplified tracking, we can't break down hours by project
@@ -179,7 +186,7 @@ router.get('/time-summary', async (req, res) => {
         data: result.rows
       });
     }
-    
+
     res.json({
       period: { start_date, end_date },
       group_by,
@@ -195,7 +202,7 @@ router.get('/time-summary', async (req, res) => {
 router.get('/project-risks', async (req, res) => {
   try {
     const result = await db.query(`
-      SELECT 
+      SELECT
         p.id,
         p.project_name,
         p.health,
@@ -204,19 +211,19 @@ router.get('/project-risks', async (req, res) => {
         u1.first_name || ' ' || u1.last_name as tier_1_name,
         u2.first_name || ' ' || u2.last_name as tier_2_name,
         COALESCE(
-          (SELECT note_text FROM project_notes pn 
-           WHERE pn.project_id = p.id 
-           ORDER BY pn.created_at DESC LIMIT 1), 
+          (SELECT note_text FROM project_notes pn
+           WHERE pn.project_id = p.id
+           ORDER BY pn.created_at DESC LIMIT 1),
           ''
         ) as latest_note,
-        CASE 
+        CASE
           WHEN p.health = 'red' THEN 'High Risk'
           WHEN p.health = 'yellow' THEN 'Medium Risk'
           WHEN p.close_date < CURRENT_DATE AND NOT p.is_closed THEN 'Overdue'
           WHEN p.due_date < CURRENT_DATE + INTERVAL '30 days' THEN 'Due Soon'
           ELSE 'Low Risk'
         END as risk_category,
-        CASE 
+        CASE
           WHEN p.health = 'red' THEN p.arr_value
           WHEN p.health = 'yellow' THEN p.arr_value * 0.5
           ELSE 0
@@ -227,7 +234,7 @@ router.get('/project-risks', async (req, res) => {
       WHERE p.status IN ('in_progress', 'active', 'ongoing', 'delivering')
       ORDER BY arr_at_risk DESC, p.health, p.close_date
     `);
-    
+
     // Group by risk category
     const riskGroups = result.rows.reduce((groups, project) => {
       const category = project.risk_category;
@@ -235,10 +242,10 @@ router.get('/project-risks', async (req, res) => {
       groups[category].push(project);
       return groups;
     }, {});
-    
+
     // Calculate total ARR at risk
     const totalArrAtRisk = result.rows.reduce((sum, p) => sum + (parseFloat(p.arr_at_risk) || 0), 0);
-    
+
     res.json({
       total_arr_at_risk: Math.round(totalArrAtRisk),
       risk_groups: riskGroups,
@@ -254,7 +261,7 @@ router.get('/project-risks', async (req, res) => {
 router.get('/export/projects', async (req, res) => {
   try {
     const result = await db.query(`
-      SELECT 
+      SELECT
         p.id,
         p.project_name,
         p.status,
@@ -262,16 +269,16 @@ router.get('/export/projects', async (req, res) => {
         p.arr_value,
         p.close_date,
         p.start_date,
-        
+
         p.is_closed,
         p.created_at,
         p.updated_at,
         u1.first_name || ' ' || u1.last_name as tier_1_name,
         u2.first_name || ' ' || u2.last_name as tier_2_name,
         COALESCE(
-          (SELECT note_text FROM project_notes pn 
-           WHERE pn.project_id = p.id 
-           ORDER BY pn.created_at DESC LIMIT 1), 
+          (SELECT note_text FROM project_notes pn
+           WHERE pn.project_id = p.id
+           ORDER BY pn.created_at DESC LIMIT 1),
           ''
         ) as latest_note
       FROM projects p
@@ -279,7 +286,7 @@ router.get('/export/projects', async (req, res) => {
       LEFT JOIN users u2 ON p.tier2_owner_id = u2.id
       ORDER BY p.created_at DESC
     `);
-    
+
     res.json(result.rows);
   } catch (error) {
     console.error('Error exporting projects:', error);
@@ -291,9 +298,9 @@ router.get('/export/projects', async (req, res) => {
 router.get('/export/time-entries', async (req, res) => {
   try {
     const { start_date, end_date } = req.query;
-    
+
     let query = `
-      SELECT 
+      SELECT
         te.id,
         te.user_id,
         u.first_name || ' ' || u.last_name as user_name,
@@ -308,28 +315,28 @@ router.get('/export/time-entries', async (req, res) => {
       JOIN users u ON te.user_id = u.id
       JOIN projects p ON te.project_id = p.id
     `;
-    
+
     const params = [];
-    
+
     if (start_date || end_date) {
       query += ' WHERE ';
       const conditions = [];
-      
+
       if (start_date) {
         conditions.push(`te.entry_date >= $${params.length + 1}`);
         params.push(start_date);
       }
-      
+
       if (end_date) {
         conditions.push(`te.entry_date <= $${params.length + 1}`);
         params.push(end_date);
       }
-      
+
       query += conditions.join(' AND ');
     }
-    
+
     query += ' ORDER BY te.entry_date DESC, u.first_name, p.project_name';
-    
+
     const result = await db.query(query, params);
     res.json(result.rows);
   } catch (error) {

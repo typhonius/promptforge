@@ -38,7 +38,7 @@ class ApiClient {
 
         const url = `${this.baseURL}${endpoint}`;
         const authHeader = this.getAuthHeader();
-        
+
         const config = {
             headers: {
                 'Content-Type': 'application/json',
@@ -54,13 +54,13 @@ class ApiClient {
 
         try {
             const response = await fetch(url, config);
-            
+
             if (response.status === 401) {
                 // Clear invalid credentials
                 this.clearCredentials();
                 throw new Error('Authentication required');
             }
-            
+
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
                 throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
@@ -75,19 +75,19 @@ class ApiClient {
 
     async requestWithRetry(endpoint, options = {}, maxRetries = 2) {
         let lastError;
-        
+
         for (let attempt = 0; attempt <= maxRetries; attempt++) {
             try {
                 return await this.request(endpoint, options);
             } catch (error) {
                 lastError = error;
-                
+
                 // Don't retry authentication errors or client errors (4xx)
                 if (error.message === 'Authentication required' ||
                     (error.message.includes('HTTP error') && error.message.includes('4'))) {
                     throw error;
                 }
-                
+
                 // If this isn't the last attempt, wait before retrying
                 if (attempt < maxRetries) {
                     const delay = Math.min(1000 * Math.pow(2, attempt), 5000); // Exponential backoff, max 5s
@@ -96,7 +96,7 @@ class ApiClient {
                 }
             }
         }
-        
+
         throw lastError;
     }
 
@@ -109,7 +109,7 @@ class ApiClient {
 
         this.isAuthenticating = true;
         this.authPromise = this._performLogin(password);
-        
+
         try {
             const result = await this.authPromise;
             return result;
@@ -187,7 +187,7 @@ class ApiClient {
         const params = new URLSearchParams();
         if (startDate) params.append('start_date', startDate);
         if (endDate) params.append('end_date', endDate);
-        
+
         return this.requestWithRetry(`/users/${userId}/time-summary?${params}`, { method: 'GET' });
     }
 
@@ -197,7 +197,7 @@ class ApiClient {
         Object.entries(filters).forEach(([key, value]) => {
             if (value) params.append(key, value);
         });
-        
+
         return this.requestWithRetry(`/projects?${params}`, { method: 'GET' });
     }
 
@@ -229,7 +229,7 @@ class ApiClient {
         const params = new URLSearchParams();
         if (startDate) params.append('start_date', startDate);
         if (endDate) params.append('end_date', endDate);
-        
+
         return this.get(`/projects/${projectId}/time-summary?${params}`);
     }
 
@@ -239,7 +239,7 @@ class ApiClient {
         Object.entries(filters).forEach(([key, value]) => {
             if (value) params.append(key, value);
         });
-        
+
         return this.get(`/time-entries?${params}`);
     }
 
@@ -272,7 +272,7 @@ class ApiClient {
         const params = new URLSearchParams();
         if (startDate) params.append('start_date', startDate);
         if (endDate) params.append('end_date', endDate);
-        
+
         return this.requestWithRetry(`/reports/executive?${params}`, { method: 'GET' });
     }
 
@@ -296,7 +296,7 @@ class ApiClient {
         const params = new URLSearchParams();
         if (startDate) params.append('start_date', startDate);
         if (endDate) params.append('end_date', endDate);
-        
+
         return this.get(`/reports/export/time-entries?${params}`);
     }
 
@@ -339,26 +339,33 @@ export const formatDateTime = (dateString) => {
 
 export const getWeekStart = (date = new Date()) => {
     const d = new Date(date);
-    const day = d.getDay();
-    const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Adjust when day is Sunday
-    const monday = new Date(d.setDate(diff));
+    const day = d.getDay(); // 0 = Sunday, 1 = Monday, etc.
+
+    // Calculate days to go back to get to Monday
+    let daysBack;
+    if (day === 0) { // Sunday
+        daysBack = 6; // Go back 6 days to Monday
+    } else { // Monday = 1, Tuesday = 2, etc.
+        daysBack = day - 1; // Go back to Monday
+    }
+
+    const monday = new Date(d.getTime() - (daysBack * 24 * 60 * 60 * 1000));
     return monday.toISOString().split('T')[0];
 };
 
 export const getWeekDates = (weekStart) => {
     const dates = [];
-    const start = new Date(weekStart);
-    
+    const start = new Date(weekStart + 'T00:00:00'); // Add time to avoid timezone issues
+
     for (let i = 0; i < 7; i++) {
-        const date = new Date(start);
-        date.setDate(start.getDate() + i);
+        const date = new Date(start.getTime() + (i * 24 * 60 * 60 * 1000));
         dates.push({
             date: date.toISOString().split('T')[0],
             dayName: date.toLocaleDateString('en-US', { weekday: 'short' }),
             dayNumber: date.getDate(),
         });
     }
-    
+
     return dates;
 };
 
@@ -396,7 +403,7 @@ export const hideLoading = () => {
 export const showModal = (title, content, actions = []) => {
     const overlay = document.getElementById('modal-overlay');
     const modalContent = document.getElementById('modal-content');
-    
+
     modalContent.innerHTML = `
         <div class="modal-header">
             <h2 class="modal-title">${title}</h2>
@@ -415,9 +422,9 @@ export const showModal = (title, content, actions = []) => {
             `).join('')}
         </div>
     `;
-    
+
     overlay.classList.add('active');
-    
+
     // Add escape key listener
     const escapeHandler = (e) => {
         if (e.key === 'Escape') {
@@ -426,7 +433,7 @@ export const showModal = (title, content, actions = []) => {
         }
     };
     document.addEventListener('keydown', escapeHandler);
-    
+
     // Store the handler so we can remove it later
     overlay.escapeHandler = escapeHandler;
 };
@@ -434,7 +441,7 @@ export const showModal = (title, content, actions = []) => {
 export const hideModal = () => {
     const overlay = document.getElementById('modal-overlay');
     overlay.classList.remove('active');
-    
+
     // Remove escape key listener if it exists
     if (overlay.escapeHandler) {
         document.removeEventListener('keydown', overlay.escapeHandler);

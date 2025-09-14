@@ -109,7 +109,7 @@ class ReportsComponent {
                     <h3><i class="fas fa-chart-line"></i> Executive Summary</h3>
                     <span class="report-period">${formatDate(this.reportData.period.startDate)} - ${formatDate(this.reportData.period.endDate)}</span>
                 </div>
-                
+
                 <div class="executive-metrics">
                     <div class="metric-row">
                         <div class="metric-item">
@@ -130,7 +130,7 @@ class ReportsComponent {
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="health-distribution">
                     <h4>Project Health Distribution</h4>
                     <div class="health-bars">
@@ -182,7 +182,7 @@ class ReportsComponent {
                 <div class="report-header">
                     <h3><i class="fas fa-heartbeat"></i> Project Health Details</h3>
                 </div>
-                
+
                 <div class="projects-health-list">
                     ${allProjects.map(project => {
                         const healthColor = getHealthColor(project.health);
@@ -199,8 +199,8 @@ class ReportsComponent {
                                 </div>
                                 ${project.latest_note ? `
                                     <div class="project-note">
-                                        ${project.latest_note.length > 100 ? 
-                                            project.latest_note.substring(0, 100) + '...' : 
+                                        ${project.latest_note.length > 100 ?
+                                            project.latest_note.substring(0, 100) + '...' :
                                             project.latest_note
                                         }
                                     </div>
@@ -224,7 +224,7 @@ class ReportsComponent {
                 <div class="report-header">
                     <h3><i class="fas fa-users"></i> Team Capacity Analysis</h3>
                 </div>
-                
+
                 <div class="capacity-overview">
                     <div class="capacity-metrics">
                         <div class="capacity-metric">
@@ -244,7 +244,7 @@ class ReportsComponent {
                             <div class="metric-value ${capacity_analysis.utilization_percentage < 70 ? 'warning' : ''}">${capacity_analysis.utilization_percentage}%</div>
                         </div>
                     </div>
-                    
+
                     ${capacity_analysis.utilization_percentage < 70 ? `
                         <div class="capacity-alert">
                             <i class="fas fa-exclamation-triangle"></i>
@@ -255,7 +255,7 @@ class ReportsComponent {
                         </div>
                     ` : ''}
                 </div>
-                
+
                 <div class="team-hours-breakdown">
                     <h4>Individual Hours Breakdown</h4>
                     <div class="hours-list">
@@ -283,14 +283,14 @@ class ReportsComponent {
                 <div class="report-header">
                     <h3><i class="fas fa-exclamation-triangle"></i> Risk Analysis</h3>
                 </div>
-                
+
                 <div class="risk-summary">
                     <div class="risk-metric">
                         <div class="metric-label">Total ARR at Risk</div>
                         <div class="metric-value risk">${formatCurrency(risks.total_arr_at_risk)}</div>
                     </div>
                 </div>
-                
+
                 <div class="risk-categories">
                     ${Object.entries(risks.risk_groups).map(([category, projects]) => `
                         <div class="risk-category">
@@ -325,7 +325,7 @@ class ReportsComponent {
                 <div class="report-header">
                     <h3><i class="fas fa-clock"></i> Time Tracking Summary</h3>
                 </div>
-                
+
                 <div class="time-summary-list">
                     ${timeSummary.data.map(entry => `
                         <div class="time-entry-row">
@@ -350,7 +350,7 @@ class ReportsComponent {
                 <div class="report-header">
                     <h3><i class="fas fa-download"></i> Export Options</h3>
                 </div>
-                
+
                 <div class="export-options">
                     <button class="btn btn-secondary" onclick="reports.exportProjects()">
                         <i class="fas fa-project-diagram"></i> Export Projects Data
@@ -362,7 +362,7 @@ class ReportsComponent {
                         <i class="fas fa-chart-bar"></i> Export Executive Report
                     </button>
                 </div>
-                
+
                 <div class="export-info">
                     <p><i class="fas fa-info-circle"></i> Exported data can be used with external reporting tools like Tableau, Power BI, or Excel for advanced analysis.</p>
                 </div>

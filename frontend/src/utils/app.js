@@ -12,7 +12,7 @@ class App {
         this.setupNavigation();
         this.setupErrorHandling();
         this.setupKeyboardShortcuts();
-        
+
         // Check if user is already authenticated
         if (api.isAuthenticated()) {
             this.hideLoginOverlay();
@@ -27,19 +27,19 @@ class App {
         const loginForm = document.getElementById('login-form');
         const loginError = document.getElementById('login-error');
         const logoutBtn = document.getElementById('logout-btn');
-        
+
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const password = document.getElementById('password').value;
-            
+
             try {
                 loginError.style.display = 'none';
                 await api.login(password);
-                
+
                 this.hideLoginOverlay();
                 this.showNotification('Login successful!', 'success');
-                
+
                 // Now safely load the dashboard and check API connection
                 await this.checkApiConnection();
                 this.showPage('dashboard');
@@ -58,7 +58,7 @@ class App {
     showLoginOverlay() {
         const overlay = document.getElementById('login-overlay');
         overlay.classList.remove('hidden');
-        
+
         // Focus on password field
         setTimeout(() => {
             document.getElementById('password').focus();
@@ -78,7 +78,7 @@ class App {
 
     setupNavigation() {
         const navLinks = document.querySelectorAll('.nav-link');
-        
+
         navLinks.forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -113,7 +113,7 @@ class App {
 
         // Update page title
         this.updatePageTitle(pageId);
-        
+
         // Initialize/refresh the page component after showing it
         this.initializePageComponent(pageId);
     }
@@ -143,8 +143,8 @@ class App {
                 }
                 break;
             case 'time-tracking':
-                if (window.timeTracking && window.timeTracking.currentUser) {
-                    window.timeTracking.loadWeekView();
+                if (window.simpleTimeTracking) {
+                    window.simpleTimeTracking.initializePage();
                 }
                 break;
             case 'reports':
@@ -279,7 +279,7 @@ class App {
     showNotification(message, type = 'info', duration = 3000) {
         const notification = document.createElement('div');
         notification.className = `notification ${type}`;
-        
+
         const icons = {
             success: 'fas fa-check-circle',
             error: 'fas fa-exclamation-circle',
@@ -331,7 +331,7 @@ class App {
                         opacity: 1;
                     }
                 }
-                
+
                 @keyframes slideOut {
                     from {
                         transform: translateX(0);
@@ -364,19 +364,19 @@ class App {
     // Handle errors globally
     handleError(error, context = '') {
         console.error(`Error in ${context}:`, error);
-        
+
         let message = 'An unexpected error occurred';
         if (error.message) {
             message = error.message;
         }
-        
+
         // If authentication error, show login overlay
         if (error.message === 'Authentication required') {
             this.showLoginOverlay();
             this.showNotification('Please log in to continue', 'warning');
             return;
         }
-        
+
         this.showNotification(`${context ? context + ': ' : ''}${message}`, 'error', 5000);
     }
 
@@ -413,14 +413,14 @@ class App {
                 flex-direction: column;
                 gap: 2rem;
             }
-            
+
             .report-section {
                 background: white;
                 border-radius: 12px;
                 padding: 2rem;
                 box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             }
-            
+
             .report-header {
                 display: flex;
                 justify-content: space-between;
@@ -429,7 +429,7 @@ class App {
                 padding-bottom: 1rem;
                 border-bottom: 1px solid #e2e8f0;
             }
-            
+
             .report-header h3 {
                 color: #1e293b;
                 display: flex;
@@ -437,66 +437,66 @@ class App {
                 gap: 0.5rem;
                 margin: 0;
             }
-            
+
             .report-period {
                 color: #64748b;
                 font-size: 0.875rem;
             }
-            
+
             .executive-metrics {
                 margin-bottom: 2rem;
             }
-            
+
             .metric-row {
                 display: grid;
                 grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
                 gap: 1rem;
             }
-            
+
             .metric-item {
                 text-align: center;
                 padding: 1rem;
                 background: #f8fafc;
                 border-radius: 8px;
             }
-            
+
             .metric-label {
                 font-size: 0.875rem;
                 color: #64748b;
                 margin-bottom: 0.5rem;
             }
-            
+
             .metric-value {
                 font-size: 1.5rem;
                 font-weight: 700;
                 color: #1e293b;
             }
-            
+
             .metric-value.risk {
                 color: #ef4444;
             }
-            
+
             .metric-value.warning {
                 color: #f59e0b;
             }
-            
+
             .health-distribution h4 {
                 margin-bottom: 1rem;
                 color: #374151;
             }
-            
+
             .health-bars {
                 display: flex;
                 flex-direction: column;
                 gap: 0.75rem;
             }
-            
+
             .health-bar {
                 display: flex;
                 align-items: center;
                 gap: 1rem;
             }
-            
+
             .health-label {
                 display: flex;
                 align-items: center;
@@ -504,17 +504,17 @@ class App {
                 min-width: 120px;
                 font-size: 0.875rem;
             }
-            
+
             .health-dot {
                 width: 12px;
                 height: 12px;
                 border-radius: 50%;
             }
-            
+
             .health-dot.green { background: #10b981; }
             .health-dot.yellow { background: #f59e0b; }
             .health-dot.red { background: #ef4444; }
-            
+
             .health-progress {
                 flex: 1;
                 height: 8px;
@@ -522,90 +522,90 @@ class App {
                 border-radius: 4px;
                 overflow: hidden;
             }
-            
+
             .health-fill {
                 height: 100%;
                 transition: width 0.3s ease;
             }
-            
+
             .health-fill.green { background: #10b981; }
             .health-fill.yellow { background: #f59e0b; }
             .health-fill.red { background: #ef4444; }
-            
+
             .projects-health-list {
                 display: flex;
                 flex-direction: column;
                 gap: 1rem;
             }
-            
+
             .project-health-row {
                 padding: 1rem;
                 border-radius: 8px;
                 border-left: 4px solid;
                 background: #f8fafc;
             }
-            
+
             .project-health-row.green { border-left-color: #10b981; }
             .project-health-row.yellow { border-left-color: #f59e0b; }
             .project-health-row.red { border-left-color: #ef4444; }
-            
+
             .project-info {
                 margin-bottom: 0.5rem;
             }
-            
+
             .project-name {
                 font-weight: 600;
                 color: #1e293b;
                 margin-bottom: 0.25rem;
             }
-            
+
             .project-owner {
                 font-size: 0.875rem;
                 color: #64748b;
             }
-            
+
             .project-metrics {
                 display: flex;
                 gap: 1rem;
                 align-items: center;
                 margin-bottom: 0.5rem;
             }
-            
+
             .arr-value {
                 font-weight: 600;
                 color: #059669;
             }
-            
+
             .close-date {
                 font-size: 0.875rem;
                 color: #64748b;
             }
-            
+
             .project-note {
                 font-size: 0.875rem;
                 color: #475569;
                 font-style: italic;
                 margin-top: 0.5rem;
             }
-            
+
             .capacity-overview {
                 margin-bottom: 2rem;
             }
-            
+
             .capacity-metrics {
                 display: grid;
                 grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
                 gap: 1rem;
                 margin-bottom: 1rem;
             }
-            
+
             .capacity-metric {
                 text-align: center;
                 padding: 1rem;
                 background: #f8fafc;
                 border-radius: 8px;
             }
-            
+
             .capacity-alert {
                 display: flex;
                 align-items: center;
@@ -616,18 +616,18 @@ class App {
                 border-radius: 8px;
                 color: #92400e;
             }
-            
+
             .team-hours-breakdown h4 {
                 margin-bottom: 1rem;
                 color: #374151;
             }
-            
+
             .hours-list {
                 display: flex;
                 flex-direction: column;
                 gap: 0.5rem;
             }
-            
+
             .person-hours {
                 display: flex;
                 justify-content: space-between;
@@ -636,28 +636,28 @@ class App {
                 background: #f8fafc;
                 border-radius: 6px;
             }
-            
+
             .person-name {
                 font-weight: 600;
                 color: #374151;
             }
-            
+
             .person-stats {
                 display: flex;
                 gap: 1rem;
                 font-size: 0.875rem;
                 color: #64748b;
             }
-            
+
             .hours {
                 font-weight: 600;
                 color: #3b82f6;
             }
-            
+
             .risk-summary {
                 margin-bottom: 2rem;
             }
-            
+
             .risk-metric {
                 text-align: center;
                 padding: 1rem;
@@ -665,24 +665,24 @@ class App {
                 border-radius: 8px;
                 border: 1px solid #ef4444;
             }
-            
+
             .risk-categories {
                 display: flex;
                 flex-direction: column;
                 gap: 1.5rem;
             }
-            
+
             .risk-category h4 {
                 margin-bottom: 1rem;
                 color: #374151;
             }
-            
+
             .risk-projects {
                 display: flex;
                 flex-direction: column;
                 gap: 0.75rem;
             }
-            
+
             .risk-project {
                 display: flex;
                 justify-content: space-between;
@@ -691,25 +691,25 @@ class App {
                 background: #f8fafc;
                 border-radius: 8px;
             }
-            
+
             .risk-metrics {
                 display: flex;
                 gap: 1rem;
                 align-items: center;
             }
-            
+
             .arr-risk {
                 font-weight: 600;
                 color: #ef4444;
                 font-size: 0.875rem;
             }
-            
+
             .time-summary-list {
                 display: flex;
                 flex-direction: column;
                 gap: 0.5rem;
             }
-            
+
             .time-entry-row {
                 display: flex;
                 justify-content: space-between;
@@ -718,30 +718,30 @@ class App {
                 background: #f8fafc;
                 border-radius: 8px;
             }
-            
+
             .entry-name {
                 font-weight: 600;
                 color: #374151;
             }
-            
+
             .entry-details {
                 font-size: 0.875rem;
                 color: #64748b;
                 margin-top: 0.25rem;
             }
-            
+
             .entry-hours {
                 font-weight: 600;
                 color: #3b82f6;
             }
-            
+
             .export-options {
                 display: flex;
                 gap: 1rem;
                 margin-bottom: 1rem;
                 flex-wrap: wrap;
             }
-            
+
             .export-info {
                 padding: 1rem;
                 background: #f0f9ff;
@@ -749,7 +749,7 @@ class App {
                 border-radius: 8px;
                 color: #0c4a6e;
             }
-            
+
             .export-info i {
                 color: #0ea5e9;
                 margin-right: 0.5rem;
