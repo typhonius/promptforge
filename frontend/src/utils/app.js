@@ -12,12 +12,13 @@ class App {
         this.setupNavigation();
         this.setupErrorHandling();
         this.setupKeyboardShortcuts();
+        this.setupRouting();
 
         // Check if user is already authenticated
         if (api.isAuthenticated()) {
             this.hideLoginOverlay();
             this.checkApiConnection();
-            this.showPage('dashboard');
+            this.handleRoute();
         } else {
             this.showLoginOverlay();
         }
@@ -90,7 +91,7 @@ class App {
         });
     }
 
-    showPage(pageId) {
+    showPage(pageId, updateUrl = true) {
         // Hide all pages
         const pages = document.querySelectorAll('.page');
         pages.forEach(page => page.classList.remove('active'));
@@ -113,6 +114,11 @@ class App {
 
         // Update page title
         this.updatePageTitle(pageId);
+
+        // Update URL if requested
+        if (updateUrl) {
+            this.updateUrl(pageId);
+        }
 
         // Initialize/refresh the page component after showing it
         this.initializePageComponent(pageId);
@@ -399,6 +405,54 @@ class App {
         document.addEventListener('keydown', (event) => {
             this.handleKeyboardShortcuts(event);
         });
+    }
+
+    // Setup URL routing
+    setupRouting() {
+        // Handle browser back/forward buttons
+        window.addEventListener('popstate', (event) => {
+            if (api.isAuthenticated()) {
+                this.handleRoute();
+            }
+        });
+    }
+
+    // Handle current route
+    handleRoute() {
+        const path = window.location.pathname;
+        const pageId = this.getPageFromPath(path);
+        this.showPage(pageId, false); // Don't update URL when handling route
+    }
+
+    // Get page ID from URL path
+    getPageFromPath(path) {
+        const routes = {
+            '/': 'dashboard',
+            '/dashboard': 'dashboard',
+            '/team': 'team',
+            '/time': 'time-tracking',
+            '/time-tracking': 'time-tracking',
+            '/projects': 'projects',
+            '/reports': 'reports'
+        };
+
+        return routes[path] || 'dashboard';
+    }
+
+    // Update URL for current page
+    updateUrl(pageId) {
+        const paths = {
+            'dashboard': '/',
+            'team': '/team',
+            'time-tracking': '/time',
+            'projects': '/projects',
+            'reports': '/reports'
+        };
+
+        const path = paths[pageId] || '/';
+        if (window.location.pathname !== path) {
+            window.history.pushState({ page: pageId }, '', path);
+        }
     }
 
     // Add CSS for reports styling
