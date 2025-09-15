@@ -87,6 +87,7 @@ class ReportsComponent {
 
         container.innerHTML = `
             <div class="reports-grid">
+                ${this.renderAIReportSection()}
                 ${this.renderExecutiveSummary()}
                 ${this.renderProjectHealthReport()}
                 ${this.renderCapacityReport()}
@@ -344,6 +345,37 @@ class ReportsComponent {
         `;
     }
 
+    renderAIReportSection() {
+        return `
+            <div class="report-section">
+                <div class="report-header">
+                    <h3><i class="fas fa-robot"></i> AI Executive Report</h3>
+                </div>
+
+                <div class="ai-report-options">
+                    <button class="btn btn-primary" onclick="reports.generateAIReport()" id="generate-ai-report-btn">
+                        <i class="fas fa-magic"></i> Generate AI Report for Leadership
+                    </button>
+                    <div class="ai-report-info">
+                        <p><i class="fas fa-info-circle"></i> Generate an AI-powered executive report formatted for Slack that includes risk assessments, actionable asks, and business impact analysis.</p>
+                    </div>
+                </div>
+
+                <div id="ai-report-result" class="ai-report-result" style="display: none;">
+                    <div class="report-header">
+                        <h4><i class="fas fa-clipboard"></i> Generated Report</h4>
+                        <button class="btn btn-secondary btn-sm" onclick="reports.copyAIReportToClipboard()" id="copy-ai-report-btn">
+                            <i class="fas fa-copy"></i> Copy to Clipboard
+                        </button>
+                    </div>
+                    <div class="ai-report-content">
+                        <pre id="ai-report-text"></pre>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
     renderExportOptions() {
         return `
             <div class="report-section">
@@ -456,12 +488,76 @@ class ReportsComponent {
         notification.className = 'notification error';
         notification.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
         notification.style.cssText = `
-            position: fixed; top: 20px; right: 20px; background: #ef4444; color: white;
+            position: fixed; top: 20px; right: 20px; background: #ff00c8; color: white;
             padding: 1rem 1.5rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             z-index: 1000; display: flex; align-items: center; gap: 0.5rem;
         `;
         document.body.appendChild(notification);
         setTimeout(() => notification.remove(), 5000);
+    }
+
+    async generateAIReport() {
+        const generateBtn = document.getElementById('generate-ai-report-btn');
+        const resultDiv = document.getElementById('ai-report-result');
+        const reportText = document.getElementById('ai-report-text');
+
+        if (!generateBtn || !resultDiv || !reportText) return;
+
+        try {
+            generateBtn.disabled = true;
+            generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating AI Report...';
+            showLoading();
+
+            // Get the selected week dates from the current report period
+            const startDate = this.reportData?.period?.startDate;
+            const endDate = this.reportData?.period?.endDate;
+
+            const response = await api.generateAIReport(startDate, endDate);
+
+            reportText.textContent = response.report;
+            resultDiv.style.display = 'block';
+
+            this.showSuccess('AI report generated successfully! Ready to copy to Slack.');
+
+            // Scroll to the result
+            resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        } catch (error) {
+            console.error('Failed to generate AI report:', error);
+            this.showError('Failed to generate AI report. Please try again.');
+        } finally {
+            generateBtn.disabled = false;
+            generateBtn.innerHTML = '<i class="fas fa-magic"></i> Generate AI Report for Leadership';
+            hideLoading();
+        }
+    }
+
+    async copyAIReportToClipboard() {
+        const reportText = document.getElementById('ai-report-text');
+        const copyBtn = document.getElementById('copy-ai-report-btn');
+
+        if (!reportText || !copyBtn) return;
+
+        try {
+            await navigator.clipboard.writeText(reportText.textContent);
+
+            // Temporarily change button text to show success
+            const originalText = copyBtn.innerHTML;
+            copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            copyBtn.classList.add('btn-success');
+            copyBtn.classList.remove('btn-secondary');
+
+            setTimeout(() => {
+                copyBtn.innerHTML = originalText;
+                copyBtn.classList.remove('btn-success');
+                copyBtn.classList.add('btn-secondary');
+            }, 2000);
+
+            this.showSuccess('Report copied to clipboard! Ready to paste into Slack.');
+        } catch (error) {
+            console.error('Failed to copy to clipboard:', error);
+            this.showError('Failed to copy to clipboard. Please select and copy manually.');
+        }
     }
 }
 

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../database/connection');
+const openaiService = require('../services/openaiService');
 
 // Get executive report data (similar to your current Python script)
 router.get('/executive', async (req, res) => {

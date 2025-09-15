@@ -300,6 +300,14 @@ class ApiClient {
         return this.get(`/reports/export/time-entries?${params}`);
     }
 
+    async generateAIReport(startDate, endDate) {
+        const params = new URLSearchParams();
+        if (startDate) params.append('start_date', startDate);
+        if (endDate) params.append('end_date', endDate);
+
+        return this.post(`/reports/ai-report?${params}`, {});
+    }
+
     // Health check
     async healthCheck() {
         return this.get('/health');
