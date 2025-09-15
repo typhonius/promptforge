@@ -155,8 +155,11 @@ class TeamComponent {
                         return false;
                     });
 
-                    // Calculate total hours for the week
-                    const totalHours = timeSummary.reduce((sum, project) => sum + parseFloat(project.total_hours || 0), 0);
+                    // Calculate total hours for the week (exclude PTO - negative hours)
+                    const totalHours = timeSummary.reduce((sum, project) => {
+                        const hours = parseFloat(project.total_hours || 0);
+                        return sum + (hours > 0 ? hours : 0); // Only count positive hours, exclude PTO
+                    }, 0);
 
                     // Update the stats display
                     const statsContainer = document.getElementById(`team-stats-${user.id}`);
@@ -190,7 +193,7 @@ class TeamComponent {
                 : 'There was an error loading the team members. Please try again.';
 
             container.innerHTML = `
-                <div class="text-center" style="grid-column: 1 / -1; padding: 3rem; color: #ef4444;">
+                <div class="text-center" style="grid-column: 1 / -1; padding: 3rem; color: #ff00c8;">
                     <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem;"></i>
                     <h3>Failed to load team</h3>
                     <p>${errorMessage}</p>
@@ -228,7 +231,11 @@ class TeamComponent {
         const statusClass = user.is_active ? 'active' : 'inactive';
         const statusText = user.is_active ? 'Active' : 'Inactive';
 
-        const totalHours = timeSummary.reduce((sum, project) => sum + parseFloat(project.total_hours || 0), 0);
+        // Calculate total hours (exclude PTO - negative hours)
+        const totalHours = timeSummary.reduce((sum, project) => {
+            const hours = parseFloat(project.total_hours || 0);
+            return sum + (hours > 0 ? hours : 0); // Only count positive hours, exclude PTO
+        }, 0);
         const activeProjects = projects.filter(p => p.status === 'in_progress').length;
 
         const content = `
@@ -337,7 +344,7 @@ class TeamComponent {
                     width: 80px;
                     height: 80px;
                     border-radius: 50%;
-                    background: linear-gradient(135deg, #3b82f6, #2563eb);
+                    background: #c8ff00;
                     display: flex;
                     align-items: center;
                     justify-content: center;
@@ -394,7 +401,7 @@ class TeamComponent {
                     width: 40px;
                     height: 40px;
                     border-radius: 8px;
-                    background: #3b82f6;
+                    background: #c8ff00;
                     display: flex;
                     align-items: center;
                     justify-content: center;
@@ -460,7 +467,7 @@ class TeamComponent {
 
                 .time-hours {
                     font-weight: 600;
-                    color: #3b82f6;
+                    color: #00c8ff;
                 }
             </style>
         `;
@@ -711,7 +718,7 @@ class TeamComponent {
         notification.className = 'notification success';
         notification.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
         notification.style.cssText = `
-            position: fixed; top: 20px; right: 20px; background: #10b981; color: white;
+            position: fixed; top: 20px; right: 20px; background: #c8ff00; color: #1a1a1a;
             padding: 1rem 1.5rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             z-index: 1000; display: flex; align-items: center; gap: 0.5rem;
         `;
@@ -724,7 +731,7 @@ class TeamComponent {
         notification.className = 'notification error';
         notification.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
         notification.style.cssText = `
-            position: fixed; top: 20px; right: 20px; background: #ef4444; color: white;
+            position: fixed; top: 20px; right: 20px; background: #ff00c8; color: white;
             padding: 1rem 1.5rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             z-index: 1000; display: flex; align-items: center; gap: 0.5rem;
         `;

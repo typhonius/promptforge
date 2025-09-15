@@ -25,8 +25,6 @@ class SimpleTimeTrackingComponent {
     setupEventListeners() {
         const userSelect = document.getElementById('user-select');
         const weekPicker = document.getElementById('week-picker');
-        const prevWeekBtn = document.getElementById('prev-week-btn');
-        const nextWeekBtn = document.getElementById('next-week-btn');
 
         if (userSelect) {
             userSelect.addEventListener('change', (e) => {
@@ -51,6 +49,11 @@ class SimpleTimeTrackingComponent {
                 }
             });
         }
+    }
+
+    setupNavigationListeners() {
+        const prevWeekBtn = document.getElementById('prev-week-btn');
+        const nextWeekBtn = document.getElementById('next-week-btn');
 
         if (prevWeekBtn) {
             prevWeekBtn.addEventListener('click', () => this.navigateWeek(-1));
@@ -101,9 +104,10 @@ class SimpleTimeTrackingComponent {
         const weekPicker = document.getElementById('week-picker');
         if (!weekPicker) return;
 
-        const date = new Date(this.currentWeek);
-        const year = date.getFullYear();
-        const week = this.getWeekNumber(date);
+        // Use the current date for week number calculation, not the week start date
+        const currentDate = new Date();
+        const year = currentDate.getFullYear();
+        const week = this.getWeekNumber(currentDate);
         weekPicker.value = `${year}-W${week.toString().padStart(2, '0')}`;
     }
 
@@ -180,7 +184,11 @@ class SimpleTimeTrackingComponent {
         const weekDates = getWeekDates(this.currentWeek);
         console.log('Current week start:', this.currentWeek);
         console.log('Week dates:', weekDates);
-        const weekTotal = weekDates.reduce((sum, day) => sum + (parseFloat(this.weekData[day.date]) || 0), 0);
+        // Only count positive hours (exclude PTO days which are -1)
+        const weekTotal = weekDates.reduce((sum, day) => {
+            const hours = parseFloat(this.weekData[day.date]) || 0;
+            return sum + (hours > 0 ? hours : 0);
+        }, 0);
 
         container.innerHTML = `
             <div class="simple-week-view">
@@ -189,7 +197,7 @@ class SimpleTimeTrackingComponent {
                         <button id="prev-week-btn" class="btn btn-secondary">
                             <i class="fas fa-chevron-left"></i> Previous Week
                         </button>
-                        <h3>Week of ${new Date(weekDates[0].date).toLocaleDateString('en-US', {
+                        <h3>Week of ${new Date(this.currentWeek).toLocaleDateString('en-US', {
                             month: 'long',
                             day: 'numeric',
                             year: 'numeric'
@@ -234,7 +242,7 @@ class SimpleTimeTrackingComponent {
                                         ${isPTO ? 'checked' : ''}
                                         onchange="simpleTimeTracking.togglePTO(this)"
                                     >
-                                    <span class="pto-label">PTO/Sick</span>
+                                    <span class="pto-label">PTO</span>
                                 </label>
                             </div>
                         </div>
@@ -250,11 +258,15 @@ class SimpleTimeTrackingComponent {
                         <i class="fas fa-eraser"></i> Clear Week
                     </button>
                 </div>
+                
+                <div class="pto-note">
+                    <small>PTO includes paid time off, illness, public holidays, etc.</small>
+                </div>
             </div>
         `;
 
-        // Re-attach event listeners for navigation
-        this.setupEventListeners();
+        // Only re-attach navigation button listeners (not all listeners)
+        this.setupNavigationListeners();
     }
 
     updateHours(input) {
@@ -371,7 +383,7 @@ class SimpleTimeTrackingComponent {
         notification.className = 'notification success';
         notification.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
         notification.style.cssText = `
-            position: fixed; top: 20px; right: 20px; background: #10b981; color: white;
+            position: fixed; top: 20px; right: 20px; background: #c8ff00; color: #1a1a1a;
             padding: 1rem 1.5rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             z-index: 1000; display: flex; align-items: center; gap: 0.5rem;
         `;
@@ -384,7 +396,7 @@ class SimpleTimeTrackingComponent {
         notification.className = 'notification error';
         notification.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
         notification.style.cssText = `
-            position: fixed; top: 20px; right: 20px; background: #ef4444; color: white;
+            position: fixed; top: 20px; right: 20px; background: #ff00c8; color: white;
             padding: 1rem 1.5rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             z-index: 1000; display: flex; align-items: center; gap: 0.5rem;
         `;

@@ -23,6 +23,20 @@ router.get('/executive', async (req, res) => {
         u1.first_name || ' ' || u1.last_name as tier_1_name,
         u2.first_name || ' ' || u2.last_name as tier_2_name,
         COALESCE(
+          (SELECT STRING_AGG(u3.first_name || ' ' || u3.last_name, ', ')
+           FROM users u3
+           WHERE u3.id::text = ANY(
+             SELECT json_array_elements_text(
+               CASE
+                 WHEN p.tier3_owners IS NULL OR p.tier3_owners = '' OR p.tier3_owners = '[]' THEN '[]'::json
+                 WHEN p.tier3_owners::text LIKE '[%]' THEN p.tier3_owners::json
+                 ELSE ('[' || p.tier3_owners || ']')::json
+               END
+             )
+           )
+          ), ''
+        ) as tier_3_names,
+        COALESCE(
           (SELECT note_text FROM project_notes pn
            WHERE pn.project_id = p.id
            ORDER BY pn.created_at DESC LIMIT 1),
@@ -43,20 +57,41 @@ router.get('/executive', async (req, res) => {
         p.arr_value DESC NULLS LAST
     `);
 
-    // Get capacity analysis with PTO-aware calculations
+    // Get capacity analysis with PTO-aware calculations and tier information
     const capacityResult = await db.query(`
       SELECT
         u.id,
         u.first_name || ' ' || u.last_name as user_name,
+        u.tier,
         COALESCE(SUM(CASE WHEN te.hours > 0 THEN te.hours ELSE 0 END), 0) as total_hours,
-        COALESCE(SUM(CASE WHEN te.hours < 0 THEN ABS(te.hours) ELSE 0 END), 0) as pto_hours
+        COALESCE(SUM(CASE WHEN te.hours < 0 THEN ABS(te.hours) ELSE 0 END), 0) as pto_hours,
+        COUNT(DISTINCT CASE WHEN te.hours > 0 THEN te.entry_date END) as days_worked,
+        (SELECT COUNT(DISTINCT p.id)
+         FROM projects p
+         WHERE (u.id = p.tier1_owner_id
+                OR u.id = p.tier2_owner_id
+                OR (p.tier3_owners IS NOT NULL
+                    AND p.tier3_owners != ''
+                    AND p.tier3_owners != '[]'
+                    AND u.id::text = ANY(
+                        SELECT json_array_elements_text(
+                            CASE
+                                WHEN p.tier3_owners::text LIKE '[%]' THEN p.tier3_owners::json
+                                ELSE ('[' || p.tier3_owners || ']')::json
+                            END
+                        )
+                    )
+                )
+               )
+           AND p.status IN ('in_progress', 'active', 'ongoing', 'delivering')
+        ) as projects_worked
       FROM users u
       LEFT JOIN time_entries te ON u.id = te.user_id
         AND te.entry_date >= $1
         AND te.entry_date <= $2
       WHERE u.is_active = true
-      GROUP BY u.id, u.first_name, u.last_name
-      ORDER BY total_hours DESC
+      GROUP BY u.id, u.first_name, u.last_name, u.tier
+      ORDER BY u.tier, total_hours DESC
     `, [reportStartDate, reportEndDate]);
 
     // Calculate team metrics with PTO adjustment
@@ -70,6 +105,34 @@ router.get('/executive', async (req, res) => {
     const availableHours = expectedHours - totalPtoHours;
     const utilizationPct = availableHours > 0 ? (totalWorkHours / availableHours) * 100 : 0;
 
+    // Group by tier for tier-based utilization
+    const tierGroups = {
+      tier1: capacityResult.rows.filter(user => user.tier === 1),
+      tier2: capacityResult.rows.filter(user => user.tier === 2),
+      tier3: capacityResult.rows.filter(user => user.tier === 3)
+    };
+
+    // Calculate tier-specific metrics
+    const tierMetrics = {};
+    Object.entries(tierGroups).forEach(([tierName, users]) => {
+      const tierWorkHours = users.reduce((sum, user) => sum + parseFloat(user.total_hours), 0);
+      const tierPtoHours = users.reduce((sum, user) => sum + parseFloat(user.pto_hours), 0);
+      const tierActiveUsers = users.filter(user => parseFloat(user.total_hours) > 0 || parseFloat(user.pto_hours) > 0).length;
+      const tierExpectedHours = tierActiveUsers * 40;
+      const tierAvailableHours = tierExpectedHours - tierPtoHours;
+      const tierUtilization = tierAvailableHours > 0 ? (tierWorkHours / tierAvailableHours) * 100 : 0;
+
+      tierMetrics[tierName] = {
+        total_hours: Math.round(tierWorkHours * 10) / 10,
+        pto_hours: Math.round(tierPtoHours * 10) / 10,
+        active_users: tierActiveUsers,
+        total_users: users.length,
+        utilization_percentage: Math.round(tierUtilization * 10) / 10,
+        avg_hours_per_person: tierActiveUsers > 0 ? Math.round((tierWorkHours / tierActiveUsers) * 10) / 10 : 0,
+        users: users
+      };
+    });
+
     // Group projects by health
     const healthGroups = {
       red: projectsResult.rows.filter(p => p.health === 'red'),
@@ -77,8 +140,15 @@ router.get('/executive', async (req, res) => {
       green: projectsResult.rows.filter(p => p.health === 'green')
     };
 
-    // Calculate ARR at risk
-    const arrAtRisk = healthGroups.red.reduce((sum, p) => sum + (parseFloat(p.arr_value) || 0), 0);
+    // Calculate ARR at risk using same logic as risk analysis
+    const arrAtRisk = projectsResult.rows.reduce((sum, p) => {
+      if (p.health === 'red') {
+        return sum + (parseFloat(p.arr_value) || 0);
+      } else if (p.health === 'yellow') {
+        return sum + ((parseFloat(p.arr_value) || 0) * 0.5);
+      }
+      return sum;
+    }, 0);
     const totalArr = projectsResult.rows.reduce((sum, p) => sum + (parseFloat(p.arr_value) || 0), 0);
 
     res.json({
@@ -102,7 +172,8 @@ router.get('/executive', async (req, res) => {
         utilization_percentage: Math.round(utilizationPct * 10) / 10,
         team_size: capacityResult.rows.length,
         active_team_size: activeUsers,
-        per_person_hours: capacityResult.rows
+        per_person_hours: capacityResult.rows,
+        tier_breakdown: tierMetrics
       },
       generated_at: new Date().toISOString()
     });
@@ -211,6 +282,20 @@ router.get('/project-risks', async (req, res) => {
         p.close_date,
         u1.first_name || ' ' || u1.last_name as tier_1_name,
         u2.first_name || ' ' || u2.last_name as tier_2_name,
+        COALESCE(
+          (SELECT STRING_AGG(u3.first_name || ' ' || u3.last_name, ', ')
+           FROM users u3
+           WHERE u3.id::text = ANY(
+             SELECT json_array_elements_text(
+               CASE
+                 WHEN p.tier3_owners IS NULL OR p.tier3_owners = '' OR p.tier3_owners = '[]' THEN '[]'::json
+                 WHEN p.tier3_owners::text LIKE '[%]' THEN p.tier3_owners::json
+                 ELSE ('[' || p.tier3_owners || ']')::json
+               END
+             )
+           )
+          ), ''
+        ) as tier_3_names,
         COALESCE(
           (SELECT note_text FROM project_notes pn
            WHERE pn.project_id = p.id
@@ -343,6 +428,154 @@ router.get('/export/time-entries', async (req, res) => {
   } catch (error) {
     console.error('Error exporting time entries:', error);
     res.status(500).json({ error: 'Failed to export time entries' });
+  }
+});
+
+// Generate AI-powered executive report for Slack
+router.post('/ai-report', async (req, res) => {
+  try {
+    // Get date range from query parameters or default to current week
+    const { start_date, end_date } = req.query;
+    
+    // Default to current week if no dates provided
+    const defaultEndDate = new Date();
+    const defaultStartDate = new Date();
+    defaultStartDate.setDate(defaultStartDate.getDate() - 7);
+
+    const reportStartDate = start_date || defaultStartDate.toISOString().split('T')[0];
+    const reportEndDate = end_date || defaultEndDate.toISOString().split('T')[0];
+
+    // Get current project data with latest notes
+    const projectsResult = await db.query(`
+      SELECT
+        p.*,
+        u1.first_name || ' ' || u1.last_name as tier_1_name,
+        u2.first_name || ' ' || u2.last_name as tier_2_name,
+        COALESCE(
+          (SELECT STRING_AGG(u3.first_name || ' ' || u3.last_name, ', ')
+           FROM users u3
+           WHERE u3.id::text = ANY(
+             SELECT json_array_elements_text(
+               CASE
+                 WHEN p.tier3_owners IS NULL OR p.tier3_owners = '' OR p.tier3_owners = '[]' THEN '[]'::json
+                 WHEN p.tier3_owners::text LIKE '[%]' THEN p.tier3_owners::json
+                 ELSE ('[' || p.tier3_owners || ']')::json
+               END
+             )
+           )
+          ), ''
+        ) as tier_3_names,
+        COALESCE(
+          (SELECT note_text FROM project_notes pn
+           WHERE pn.project_id = p.id
+           ORDER BY pn.created_at DESC LIMIT 1),
+          ''
+        ) as latest_note
+      FROM projects p
+      LEFT JOIN users u1 ON p.tier1_owner_id = u1.id
+      LEFT JOIN users u2 ON p.tier2_owner_id = u2.id
+      WHERE p.status IN ('in_progress', 'active', 'ongoing', 'delivering')
+      ORDER BY
+        CASE p.health
+          WHEN 'red' THEN 1
+          WHEN 'yellow' THEN 2
+          WHEN 'green' THEN 3
+          ELSE 4
+        END,
+        p.arr_value DESC NULLS LAST
+    `);
+
+    // Get capacity data for the selected week
+
+    const capacityResult = await db.query(`
+      SELECT
+        u.id,
+        u.first_name || ' ' || u.last_name as user_name,
+        u.tier,
+        COALESCE(SUM(CASE WHEN te.hours > 0 THEN te.hours ELSE 0 END), 0) as total_hours,
+        COALESCE(SUM(CASE WHEN te.hours < 0 THEN ABS(te.hours) ELSE 0 END), 0) as pto_hours,
+        COUNT(DISTINCT CASE WHEN te.hours > 0 THEN te.entry_date END) as days_worked
+      FROM users u
+      LEFT JOIN time_entries te ON u.id = te.user_id
+        AND te.entry_date >= $1
+        AND te.entry_date <= $2
+      WHERE u.is_active = true
+      GROUP BY u.id, u.first_name, u.last_name, u.tier
+      ORDER BY u.tier, total_hours DESC
+    `, [reportStartDate, reportEndDate]);
+
+    // Calculate team metrics with PTO adjustment
+    const totalWorkHours = capacityResult.rows.reduce((sum, user) => sum + parseFloat(user.total_hours), 0);
+    const totalPtoHours = capacityResult.rows.reduce((sum, user) => sum + parseFloat(user.pto_hours), 0);
+    const activeUsers = capacityResult.rows.filter(user => parseFloat(user.total_hours) > 0 || parseFloat(user.pto_hours) > 0).length;
+
+    // Calculate utilization: work_hours / (expected_hours - pto_hours)
+    const expectedHours = activeUsers * 40; // 40h/week per user
+    const availableHours = expectedHours - totalPtoHours;
+    const utilizationPct = availableHours > 0 ? (totalWorkHours / availableHours) * 100 : 0;
+
+    // Group by tier for tier-based utilization
+    const tierGroups = {
+      tier1: capacityResult.rows.filter(user => user.tier === 1),
+      tier2: capacityResult.rows.filter(user => user.tier === 2),
+      tier3: capacityResult.rows.filter(user => user.tier === 3)
+    };
+
+    // Calculate tier-specific metrics
+    const tierMetrics = {};
+    Object.entries(tierGroups).forEach(([tierName, users]) => {
+      const tierWorkHours = users.reduce((sum, user) => sum + parseFloat(user.total_hours), 0);
+      const tierPtoHours = users.reduce((sum, user) => sum + parseFloat(user.pto_hours), 0);
+      const tierActiveUsers = users.filter(user => parseFloat(user.total_hours) > 0 || parseFloat(user.pto_hours) > 0).length;
+      const tierExpectedHours = tierActiveUsers * 40;
+      const tierAvailableHours = tierExpectedHours - tierPtoHours;
+      const tierUtilization = tierAvailableHours > 0 ? (tierWorkHours / tierAvailableHours) * 100 : 0;
+
+      tierMetrics[tierName] = {
+        total_hours: Math.round(tierWorkHours * 10) / 10,
+        pto_hours: Math.round(tierPtoHours * 10) / 10,
+        active_users: tierActiveUsers,
+        total_users: users.length,
+        utilization_percentage: Math.round(tierUtilization * 10) / 10,
+        avg_hours_per_person: tierActiveUsers > 0 ? Math.round((tierWorkHours / tierActiveUsers) * 10) / 10 : 0,
+        users: users
+      };
+    });
+
+    const capacityData = {
+      utilization_percentage: Math.round(utilizationPct * 10) / 10,
+      active_team_size: activeUsers,
+      team_size: capacityResult.rows.length,
+      tier_breakdown: tierMetrics
+    };
+
+    // Generate AI report
+    const aiReport = await openaiService.generateAIReport({
+      projects: projectsResult.rows,
+      capacityData: capacityData,
+      reportPeriod: {
+        start_date: reportStartDate,
+        end_date: reportEndDate
+      }
+    });
+
+    res.json({
+      report: aiReport,
+      generated_at: new Date().toISOString(),
+      report_period: {
+        start_date: reportStartDate,
+        end_date: reportEndDate
+      },
+      projects_count: projectsResult.rows.length,
+      capacity_data: capacityData
+    });
+
+  } catch (error) {
+    console.error('Error generating AI report:', error);
+    res.status(500).json({
+      error: 'Failed to generate AI report',
+      message: error.message
+    });
   }
 });
 

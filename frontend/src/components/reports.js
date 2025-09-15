@@ -1,5 +1,5 @@
 // Reports Component
-import { api, formatCurrency, formatDate, getHealthColor, showLoading, hideLoading } from '../utils/api.js';
+import { api, formatCurrency, formatDate, getHealthColor, showLoading, hideLoading, getWeekStart, getWeekDates } from '../utils/api.js';
 
 class ReportsComponent {
     constructor() {
@@ -14,45 +14,70 @@ class ReportsComponent {
 
     setupEventListeners() {
         const generateReportBtn = document.getElementById('generate-report-btn');
-        const startDateInput = document.getElementById('report-start-date');
-        const endDateInput = document.getElementById('report-end-date');
+        const weekPicker = document.getElementById('report-week-picker');
 
         if (generateReportBtn) {
             generateReportBtn.addEventListener('click', () => this.generateReport());
         }
 
-        // Auto-generate report when dates change
-        if (startDateInput && endDateInput) {
-            startDateInput.addEventListener('change', () => this.generateReport());
-            endDateInput.addEventListener('change', () => this.generateReport());
+        // Auto-generate report when week changes
+        if (weekPicker) {
+            weekPicker.addEventListener('change', () => this.generateReport());
         }
     }
 
     setDefaultDates() {
-        const endDate = new Date();
-        const startDate = new Date();
-        startDate.setDate(startDate.getDate() - 7); // Last 7 days
+        const currentWeek = getWeekStart(new Date());
+        const weekPicker = document.getElementById('report-week-picker');
 
-        const startDateInput = document.getElementById('report-start-date');
-        const endDateInput = document.getElementById('report-end-date');
-
-        if (startDateInput) startDateInput.value = startDate.toISOString().split('T')[0];
-        if (endDateInput) endDateInput.value = endDate.toISOString().split('T')[0];
+        if (weekPicker) {
+            // Use the current date (not the week start date) for week number calculation
+            const currentDate = new Date();
+            const year = currentDate.getFullYear();
+            const week = this.getWeekNumber(currentDate);
+            weekPicker.value = `${year}-W${week.toString().padStart(2, '0')}`;
+        }
 
         // Generate initial report
         this.generateReport();
     }
 
-    async generateReport() {
-        const startDateInput = document.getElementById('report-start-date');
-        const endDateInput = document.getElementById('report-end-date');
+    getWeekNumber(date) {
+        // ISO week numbering (Monday = start of week)
+        const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+        const dayNum = d.getUTCDay() || 7; // Sunday = 7, Monday = 1
+        d.setUTCDate(d.getUTCDate() + 4 - dayNum); // Move to Thursday of the same week
+        const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+        return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+    }
 
-        if (!startDateInput?.value || !endDateInput?.value) {
+    getDateFromWeek(year, week) {
+        // Create a date for January 4th of the given year (always in week 1)
+        const jan4 = new Date(year, 0, 4);
+        // Find the Monday of week 1
+        const jan4Day = jan4.getDay();
+        const daysToMonday = jan4Day === 0 ? -6 : 1 - jan4Day;
+        const firstMonday = new Date(jan4.getTime() + daysToMonday * 24 * 60 * 60 * 1000);
+
+        // Calculate the Monday of the requested week
+        const targetMonday = new Date(firstMonday.getTime() + (week - 1) * 7 * 24 * 60 * 60 * 1000);
+        return targetMonday;
+    }
+
+    async generateReport() {
+        const weekPicker = document.getElementById('report-week-picker');
+
+        if (!weekPicker?.value) {
             return;
         }
 
-        const startDate = startDateInput.value;
-        const endDate = endDateInput.value;
+        // Convert week picker value to start and end dates
+        const [year, week] = weekPicker.value.split('-W');
+        const weekStart = this.getDateFromWeek(parseInt(year), parseInt(week));
+        const weekEnd = new Date(weekStart.getTime() + (6 * 24 * 60 * 60 * 1000));
+
+        const startDate = weekStart.toISOString().split('T')[0];
+        const endDate = weekEnd.toISOString().split('T')[0];
 
         showLoading();
         try {
@@ -191,7 +216,7 @@ class ReportsComponent {
                             <div class="project-health-row ${healthColor}">
                                 <div class="project-info">
                                     <div class="project-name">${project.project_name}</div>
-                                    <div class="project-owner">${[project.tier_1_name, project.tier_2_name].filter(name => name).join(', ') || 'No tiers assigned'}</div>
+                                    <div class="project-owner">${[project.tier_1_name, project.tier_2_name, project.tier_3_names].filter(name => name && name.trim()).join(', ') || 'No tiers assigned'}</div>
                                 </div>
                                 <div class="project-metrics">
                                     <div class="health-badge ${healthColor}">${project.health}</div>
@@ -241,7 +266,7 @@ class ReportsComponent {
                             <div class="metric-value">${capacity_analysis.active_team_size}/${capacity_analysis.team_size}</div>
                         </div>
                         <div class="capacity-metric">
-                            <div class="metric-label">Utilization</div>
+                            <div class="metric-label">Overall Utilization</div>
                             <div class="metric-value ${capacity_analysis.utilization_percentage < 70 ? 'warning' : ''}">${capacity_analysis.utilization_percentage}%</div>
                         </div>
                     </div>
@@ -257,15 +282,28 @@ class ReportsComponent {
                     ` : ''}
                 </div>
 
-                <div class="team-hours-breakdown">
-                    <h4>Individual Hours Breakdown</h4>
-                    <div class="hours-list">
-                        ${capacity_analysis.per_person_hours.map(person => `
-                            <div class="person-hours">
-                                <div class="person-name">${person.user_name}</div>
-                                <div class="person-stats">
-                                    <span class="hours">${person.total_hours}h</span>
-                                    <span class="projects">${person.projects_worked} projects</span>
+                <div class="tier-breakdown">
+                    <h4>Utilization by Tier</h4>
+                    <div class="tier-metrics">
+                        ${Object.entries(capacity_analysis.tier_breakdown || {}).map(([tierName, tierData]) => `
+                            <div class="tier-section">
+                                <div class="tier-header">
+                                    <h5>Tier ${tierName.replace('tier', '')} (${tierData.active_users}/${tierData.total_users} active)</h5>
+                                    <div class="tier-utilization ${tierData.utilization_percentage < 70 ? 'warning' : ''}">${tierData.utilization_percentage}%</div>
+                                </div>
+                                <div class="tier-stats">
+                                    <span class="tier-hours">${tierData.total_hours}h total</span>
+                                    <span class="tier-avg">${tierData.avg_hours_per_person}h avg</span>
+                                    ${tierData.pto_hours > 0 ? `<span class="tier-pto">${tierData.pto_hours}h PTO</span>` : ''}
+                                </div>
+                                <div class="tier-users">
+                                    ${tierData.users.map(user => `
+                                        <div class="tier-user">
+                                            <span class="user-name">${user.user_name}</span>
+                                            <span class="user-hours">${user.total_hours}h</span>
+                                            ${user.projects_worked > 0 ? `<span class="user-projects">${user.projects_worked} projects</span>` : ''}
+                                        </div>
+                                    `).join('')}
                                 </div>
                             </div>
                         `).join('')}
@@ -301,7 +339,7 @@ class ReportsComponent {
                                     <div class="risk-project">
                                         <div class="project-info">
                                             <div class="project-name">${project.project_name}</div>
-                                            <div class="project-owner">${[project.tier_1_name, project.tier_2_name].filter(name => name).join(', ') || 'No tiers assigned'}</div>
+                                            <div class="project-owner">${[project.tier_1_name, project.tier_2_name, project.tier_3_names].filter(name => name && name.trim()).join(', ') || 'No tiers assigned'}</div>
                                         </div>
                                         <div class="risk-metrics">
                                             <div class="health-badge ${getHealthColor(project.health)}">${project.health}</div>
@@ -406,7 +444,7 @@ class ReportsComponent {
         const container = document.getElementById('reports-content');
         if (container) {
             container.innerHTML = `
-                <div class="text-center" style="padding: 3rem; color: #ef4444;">
+                <div class="text-center" style="padding: 3rem; color: #ff00c8;">
                     <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem;"></i>
                     <h3>Failed to generate reports</h3>
                     <p>There was an error generating the reports. Please try again.</p>
@@ -475,7 +513,7 @@ class ReportsComponent {
         notification.className = 'notification success';
         notification.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
         notification.style.cssText = `
-            position: fixed; top: 20px; right: 20px; background: #10b981; color: white;
+            position: fixed; top: 20px; right: 20px; background: #c8ff00; color: #1a1a1a;
             padding: 1rem 1.5rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             z-index: 1000; display: flex; align-items: center; gap: 0.5rem;
         `;

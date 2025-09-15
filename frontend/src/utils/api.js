@@ -346,27 +346,35 @@ export const formatDateTime = (dateString) => {
 };
 
 export const getWeekStart = (date = new Date()) => {
+    // Always use local time to avoid timezone confusion
     const d = new Date(date);
+    const year = d.getFullYear();
+    const month = d.getMonth();
+    const dateNum = d.getDate();
     const day = d.getDay(); // 0 = Sunday, 1 = Monday, etc.
 
     // Calculate days to go back to get to Monday
+    // Week runs Monday-Sunday, so Sunday belongs to the current week (not next week)
     let daysBack;
-    if (day === 0) { // Sunday
-        daysBack = 6; // Go back 6 days to Monday
-    } else { // Monday = 1, Tuesday = 2, etc.
-        daysBack = day - 1; // Go back to Monday
+    if (day === 0) { // Sunday - go back 6 days to get Monday of THIS week
+        daysBack = 6;
+    } else { // Monday = 1, Tuesday = 2, etc. - go back to Monday
+        daysBack = day - 1;
     }
 
-    const monday = new Date(d.getTime() - (daysBack * 24 * 60 * 60 * 1000));
+    // Create Monday date using local date components
+    const monday = new Date(year, month, dateNum - daysBack);
     return monday.toISOString().split('T')[0];
 };
 
 export const getWeekDates = (weekStart) => {
     const dates = [];
-    const start = new Date(weekStart + 'T00:00:00'); // Add time to avoid timezone issues
+    // Parse the date string and create date using local components
+    const [year, month, day] = weekStart.split('-').map(Number);
+    const start = new Date(year, month - 1, day); // month is 0-indexed
 
     for (let i = 0; i < 7; i++) {
-        const date = new Date(start.getTime() + (i * 24 * 60 * 60 * 1000));
+        const date = new Date(year, month - 1, day + i);
         dates.push({
             date: date.toISOString().split('T')[0],
             dayName: date.toLocaleDateString('en-US', { weekday: 'short' }),

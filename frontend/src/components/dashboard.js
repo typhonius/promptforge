@@ -204,7 +204,7 @@ class DashboardComponent {
                 : 'Failed to load dashboard data';
 
             container.innerHTML = `
-                <div class="text-center" style="padding: 2rem; color: #ef4444;">
+                <div class="text-center" style="padding: 2rem; color: #ff00c8;">
                     <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 1rem;"></i>
                     <p>${errorMessage}</p>
                     ${!isAuthError ? `
@@ -371,7 +371,7 @@ class DashboardComponent {
                     background: #f8fafc;
                     padding: 1rem;
                     border-radius: 8px;
-                    border-left: 3px solid #3b82f6;
+                    border-left: 3px solid #00c8ff;
                 }
 
                 .note-header {

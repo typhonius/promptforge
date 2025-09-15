@@ -176,7 +176,7 @@ class ProjectsComponent {
                 : 'There was an error loading the projects. Please try again.';
 
             container.innerHTML = `
-                <div class="text-center" style="grid-column: 1 / -1; padding: 3rem; color: #ef4444;">
+                <div class="text-center" style="grid-column: 1 / -1; padding: 3rem; color: #ff00c8;">
                     <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem;"></i>
                     <h3>Failed to load projects</h3>
                     <p>${errorMessage}</p>
@@ -380,7 +380,7 @@ class ProjectsComponent {
                     background: #f8fafc;
                     padding: 1rem;
                     border-radius: 8px;
-                    border-left: 3px solid #3b82f6;
+                    border-left: 3px solid #00c8ff;
                 }
 
                 .note-header {
@@ -855,7 +855,7 @@ class ProjectsComponent {
         notification.className = 'notification success';
         notification.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
         notification.style.cssText = `
-            position: fixed; top: 20px; right: 20px; background: #10b981; color: white;
+            position: fixed; top: 20px; right: 20px; background: #c8ff00; color: #1a1a1a;
             padding: 1rem 1.5rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             z-index: 1000; display: flex; align-items: center; gap: 0.5rem;
         `;
@@ -868,7 +868,7 @@ class ProjectsComponent {
         notification.className = 'notification error';
         notification.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
         notification.style.cssText = `
-            position: fixed; top: 20px; right: 20px; background: #ef4444; color: white;
+            position: fixed; top: 20px; right: 20px; background: #ff00c8; color: white;
             padding: 1rem 1.5rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             z-index: 1000; display: flex; align-items: center; gap: 0.5rem;
         `;

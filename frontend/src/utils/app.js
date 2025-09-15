@@ -204,7 +204,7 @@ class App {
                 position: fixed;
                 top: 70px;
                 right: 20px;
-                background: #ef4444;
+                background: #ff00c8;
                 color: white;
                 padding: 0.75rem 1rem;
                 border-radius: 8px;
@@ -294,10 +294,10 @@ class App {
         };
 
         const colors = {
-            success: '#10b981',
-            error: '#ef4444',
-            warning: '#f59e0b',
-            info: '#3b82f6'
+            success: '#00c8ff',  // Changed to match info color (cyan blue)
+            error: '#ff00c8',
+            warning: '#ffcc00',
+            info: '#00c8ff'
         };
 
         notification.innerHTML = `
@@ -527,11 +527,11 @@ class App {
             }
 
             .metric-value.risk {
-                color: #ef4444;
+                color: #ff00c8;
             }
 
             .metric-value.warning {
-                color: #f59e0b;
+                color: #ffcc00;
             }
 
             .health-distribution h4 {
@@ -565,9 +565,9 @@ class App {
                 border-radius: 50%;
             }
 
-            .health-dot.green { background: #10b981; }
-            .health-dot.yellow { background: #f59e0b; }
-            .health-dot.red { background: #ef4444; }
+            .health-dot.green { background: #c8ff00; }
+            .health-dot.yellow { background: #ffcc00; }
+            .health-dot.red { background: #ff00c8; }
 
             .health-progress {
                 flex: 1;
@@ -582,9 +582,9 @@ class App {
                 transition: width 0.3s ease;
             }
 
-            .health-fill.green { background: #10b981; }
-            .health-fill.yellow { background: #f59e0b; }
-            .health-fill.red { background: #ef4444; }
+            .health-fill.green { background: #c8ff00; }
+            .health-fill.yellow { background: #ffcc00; }
+            .health-fill.red { background: #ff00c8; }
 
             .projects-health-list {
                 display: flex;
@@ -599,9 +599,9 @@ class App {
                 background: #f8fafc;
             }
 
-            .project-health-row.green { border-left-color: #10b981; }
-            .project-health-row.yellow { border-left-color: #f59e0b; }
-            .project-health-row.red { border-left-color: #ef4444; }
+            .project-health-row.green { border-left-color: #c8ff00; }
+            .project-health-row.yellow { border-left-color: #ffcc00; }
+            .project-health-row.red { border-left-color: #ff00c8; }
 
             .project-info {
                 margin-bottom: 0.5rem;
@@ -627,7 +627,7 @@ class App {
 
             .arr-value {
                 font-weight: 600;
-                color: #059669;
+                color: #00c8ff;
             }
 
             .close-date {
@@ -666,7 +666,7 @@ class App {
                 gap: 1rem;
                 padding: 1rem;
                 background: #fef3c7;
-                border: 1px solid #f59e0b;
+                border: 1px solid #ffcc00;
                 border-radius: 8px;
                 color: #92400e;
             }
@@ -705,7 +705,7 @@ class App {
 
             .hours {
                 font-weight: 600;
-                color: #3b82f6;
+                color: #00c8ff;
             }
 
             .risk-summary {
@@ -717,7 +717,7 @@ class App {
                 padding: 1rem;
                 background: #fee2e2;
                 border-radius: 8px;
-                border: 1px solid #ef4444;
+                border: 1px solid #ff00c8;
             }
 
             .risk-categories {
@@ -754,7 +754,7 @@ class App {
 
             .arr-risk {
                 font-weight: 600;
-                color: #ef4444;
+                color: #ff00c8;
                 font-size: 0.875rem;
             }
 
@@ -786,7 +786,7 @@ class App {
 
             .entry-hours {
                 font-weight: 600;
-                color: #3b82f6;
+                color: #00c8ff;
             }
 
             .export-options {
