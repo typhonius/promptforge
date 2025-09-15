@@ -221,8 +221,8 @@ body {
 }
 
 .metric-icon {
-    width: 60px;
-    height: 60px;
+    min-width: 60px;
+    min-height: 60px;
     border-radius: 12px;
     display: flex;
     align-items: center;
@@ -237,7 +237,7 @@ body {
 .metric-icon.red { background: linear-gradient(135deg, var(--color-accent), var(--color-accent-dark)); }
 
 .metric-content h3 {
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-weight: 700;
     color: var(--color-text-primary);
     margin-bottom: 0.25rem;
