@@ -1,5 +1,5 @@
 // Projects Component
-import { api, formatCurrency, formatDate, getHealthColor, showLoading, hideLoading, showModal } from '../utils/api.js';
+import { api, formatCurrency, formatNumber, formatDate, getHealthColor, showLoading, hideLoading, showModal } from '../utils/api.js';
 
 class ProjectsComponent {
     constructor() {
@@ -91,7 +91,7 @@ class ProjectsComponent {
 
         container.innerHTML = this.projects.map(project => {
             const healthColor = getHealthColor(project.health);
-            const arrDisplay = project.arr_value ? formatCurrency(project.arr_value) : '';
+            const arrDisplay = project.arr_value ? formatNumber(project.arr_value) : '';
             const startDate = project.start_date ? formatDate(project.start_date) : '';
             const closeDate = project.close_date ? formatDate(project.close_date) : '';
 

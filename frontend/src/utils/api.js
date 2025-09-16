@@ -325,6 +325,14 @@ export const formatCurrency = (amount) => {
     }).format(amount);
 };
 
+export const formatNumber = (amount) => {
+    if (!amount) return '0';
+    return new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+    }).format(amount);
+};
+
 export const formatDate = (dateString) => {
     if (!dateString) return '';
     return new Date(dateString).toLocaleDateString('en-US', {

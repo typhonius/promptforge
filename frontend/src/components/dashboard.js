@@ -1,5 +1,5 @@
 // Dashboard Component
-import { api, formatCurrency, formatDate, getHealthColor, showLoading, hideLoading } from '../utils/api.js';
+import { api, formatCurrency, formatNumber, formatDate, getHealthColor, showLoading, hideLoading } from '../utils/api.js';
 
 class DashboardComponent {
     constructor() {
@@ -96,7 +96,7 @@ class DashboardComponent {
 
         container.innerHTML = allProjects.map(project => {
             const healthColor = getHealthColor(project.health);
-            const arrDisplay = project.arr_value ? formatCurrency(project.arr_value) : '';
+            const arrDisplay = project.arr_value ? formatNumber(project.arr_value) : '';
             const closeDate = project.close_date ? formatDate(project.close_date) : '';
 
             return `
@@ -108,7 +108,7 @@ class DashboardComponent {
                     </div>
                     <div class="project-meta">
                         <div class="health-badge ${healthColor}">${project.health}</div>
-                        ${arrDisplay ? `<div class="project-arr">${arrDisplay} ARR</div>` : ''}
+                        ${arrDisplay ? `<div class="project-arr"><i class="fas fa-dollar-sign"></i> ${arrDisplay} ARR</div>` : ''}
                         ${closeDate ? `<div class="project-dates">Closes: ${closeDate}</div>` : ''}
                         ${project.period_hours ? `<div class="project-hours">${project.period_hours}h this week</div>` : ''}
                     </div>
