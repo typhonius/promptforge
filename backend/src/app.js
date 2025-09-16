@@ -27,7 +27,10 @@ const projectRoutes = require('./routes/projects');
 const timeEntryRoutes = require('./routes/timeEntries');
 const reportRoutes = require('./routes/reports');
 
-// Health check endpoint (no auth required)
+// Apply authentication to all API routes (including health check)
+app.use('/api', basicAuth);
+
+// Health check endpoint (now requires auth)
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'OK',
@@ -35,9 +38,6 @@ app.get('/api/health', (req, res) => {
     service: 'PromptForge API'
   });
 });
-
-// Apply authentication to all other API routes
-app.use('/api', basicAuth);
 
 // Use routes (now protected by auth)
 app.use('/api/users', userRoutes);
