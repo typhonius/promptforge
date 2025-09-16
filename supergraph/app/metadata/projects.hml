@@ -1,0 +1,288 @@
+---
+kind: ObjectType
+version: v1
+definition:
+  name: projects
+  fields:
+    - name: arr_value
+      type: bigdecimal
+    - name: close_date
+      type: date
+    - name: created_at
+      type: timestamp
+    - name: due_date
+      type: date
+    - name: health
+      type: string
+    - name: id
+      type: int_32!
+    - name: is_closed
+      type: boolean
+    - name: project_name
+      type: string!
+    - name: start_date
+      type: date
+    - name: status
+      type: string
+    - name: template_id
+      type: int_32
+    - name: tier_1_owner_id
+      type: int_32
+    - name: tier_2_owner_id
+      type: int_32
+    - name: tier_3_owners
+      type: string
+    - name: updated_at
+      type: timestamp
+  graphql:
+    typeName: projects
+    inputTypeName: projects_input
+  dataConnectorTypeMapping:
+    - dataConnectorName: mypostgres_promptql
+      dataConnectorObjectType: projects
+      fieldMapping:
+        arr_value:
+          column:
+            name: arr_value
+        close_date:
+          column:
+            name: close_date
+        created_at:
+          column:
+            name: created_at
+        due_date:
+          column:
+            name: due_date
+        health:
+          column:
+            name: health
+        id:
+          column:
+            name: id
+        is_closed:
+          column:
+            name: is_closed
+        project_name:
+          column:
+            name: project_name
+        start_date:
+          column:
+            name: start_date
+        status:
+          column:
+            name: status
+        template_id:
+          column:
+            name: template_id
+        tier_1_owner_id:
+          column:
+            name: tier1_owner_id
+        tier_2_owner_id:
+          column:
+            name: tier2_owner_id
+        tier_3_owners:
+          column:
+            name: tier3_owners
+        updated_at:
+          column:
+            name: updated_at
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: projects
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - arr_value
+          - close_date
+          - created_at
+          - due_date
+          - health
+          - id
+          - is_closed
+          - project_name
+          - start_date
+          - status
+          - template_id
+          - tier_1_owner_id
+          - tier_2_owner_id
+          - tier_3_owners
+          - updated_at
+
+---
+kind: BooleanExpressionType
+version: v1
+definition:
+  name: projects_bool_exp
+  operand:
+    object:
+      type: projects
+      comparableFields:
+        - fieldName: arr_value
+          booleanExpressionType: decimal_bool_exp
+        - fieldName: close_date
+          booleanExpressionType: date_bool_exp
+        - fieldName: created_at
+          booleanExpressionType: timestamp_without_time_zone_bool_exp
+        - fieldName: due_date
+          booleanExpressionType: date_bool_exp
+        - fieldName: health
+          booleanExpressionType: character_varying_bool_exp
+        - fieldName: id
+          booleanExpressionType: integer_bool_exp
+        - fieldName: is_closed
+          booleanExpressionType: boolean_bool_exp
+        - fieldName: project_name
+          booleanExpressionType: character_varying_bool_exp
+        - fieldName: start_date
+          booleanExpressionType: date_bool_exp
+        - fieldName: status
+          booleanExpressionType: character_varying_bool_exp
+        - fieldName: template_id
+          booleanExpressionType: integer_bool_exp
+        - fieldName: tier_1_owner_id
+          booleanExpressionType: integer_bool_exp
+        - fieldName: tier_2_owner_id
+          booleanExpressionType: integer_bool_exp
+        - fieldName: tier_3_owners
+          booleanExpressionType: text_bool_exp
+        - fieldName: updated_at
+          booleanExpressionType: timestamp_without_time_zone_bool_exp
+      comparableRelationships: []
+  logicalOperators:
+    enable: true
+  isNull:
+    enable: true
+  graphql:
+    typeName: projects_bool_exp
+
+---
+kind: AggregateExpression
+version: v1
+definition:
+  name: projects_agg_exp
+  operand:
+    object:
+      aggregatedType: projects
+      aggregatableFields:
+        - fieldName: arr_value
+          aggregateExpression: decimal_agg_exp
+        - fieldName: close_date
+          aggregateExpression: date_agg_exp
+        - fieldName: created_at
+          aggregateExpression: timestamp_without_time_zone_agg_exp
+        - fieldName: due_date
+          aggregateExpression: date_agg_exp
+        - fieldName: health
+          aggregateExpression: character_varying_agg_exp
+        - fieldName: id
+          aggregateExpression: integer_agg_exp
+        - fieldName: is_closed
+          aggregateExpression: boolean_agg_exp
+        - fieldName: project_name
+          aggregateExpression: character_varying_agg_exp
+        - fieldName: start_date
+          aggregateExpression: date_agg_exp
+        - fieldName: status
+          aggregateExpression: character_varying_agg_exp
+        - fieldName: template_id
+          aggregateExpression: integer_agg_exp
+        - fieldName: tier_1_owner_id
+          aggregateExpression: integer_agg_exp
+        - fieldName: tier_2_owner_id
+          aggregateExpression: integer_agg_exp
+        - fieldName: tier_3_owners
+          aggregateExpression: text_agg_exp
+        - fieldName: updated_at
+          aggregateExpression: timestamp_without_time_zone_agg_exp
+  count:
+    enable: true
+  graphql:
+    selectTypeName: projects_agg_exp
+
+---
+kind: OrderByExpression
+version: v1
+definition:
+  name: projects_order_by_exp
+  operand:
+    object:
+      orderedType: projects
+      orderableFields:
+        - fieldName: arr_value
+          orderByExpression: bigdecimal_order_by_exp
+        - fieldName: close_date
+          orderByExpression: date_order_by_exp
+        - fieldName: created_at
+          orderByExpression: timestamp_order_by_exp
+        - fieldName: due_date
+          orderByExpression: date_order_by_exp
+        - fieldName: health
+          orderByExpression: string_order_by_exp
+        - fieldName: id
+          orderByExpression: int_32_order_by_exp
+        - fieldName: is_closed
+          orderByExpression: boolean_order_by_exp
+        - fieldName: project_name
+          orderByExpression: string_order_by_exp
+        - fieldName: start_date
+          orderByExpression: date_order_by_exp
+        - fieldName: status
+          orderByExpression: string_order_by_exp
+        - fieldName: template_id
+          orderByExpression: int_32_order_by_exp
+        - fieldName: tier_1_owner_id
+          orderByExpression: int_32_order_by_exp
+        - fieldName: tier_2_owner_id
+          orderByExpression: int_32_order_by_exp
+        - fieldName: tier_3_owners
+          orderByExpression: string_order_by_exp
+        - fieldName: updated_at
+          orderByExpression: timestamp_order_by_exp
+      orderableRelationships: []
+  graphql:
+    expressionTypeName: projects_order_by_exp
+
+---
+kind: Model
+version: v2
+definition:
+  name: projects
+  objectType: projects
+  source:
+    dataConnectorName: mypostgres_promptql
+    collection: projects
+  filterExpressionType: projects_bool_exp
+  aggregateExpression: projects_agg_exp
+  orderByExpression: projects_order_by_exp
+  graphql:
+    selectMany:
+      queryRootField: projects
+      subscription:
+        rootField: projects
+    selectUniques:
+      - queryRootField: projects_by_id
+        uniqueIdentifier:
+          - id
+        subscription:
+          rootField: projects_by_id
+    filterInputTypeName: projects_filter_input
+    aggregate:
+      queryRootField: projects_aggregate
+      subscription:
+        rootField: projects_aggregate
+
+---
+kind: ModelPermissions
+version: v1
+definition:
+  modelName: projects
+  permissions:
+    - role: admin
+      select:
+        filter: null
+        allowSubscriptions: true
+

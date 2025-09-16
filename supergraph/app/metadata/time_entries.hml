@@ -1,0 +1,161 @@
+---
+kind: ObjectType
+version: v1
+definition:
+  name: time_entries
+  fields:
+    - name: created_at
+      type: timestamp
+    - name: entry_date
+      type: date!
+    - name: hours
+      type: bigdecimal!
+    - name: id
+      type: int_32!
+    - name: updated_at
+      type: timestamp
+    - name: user_id
+      type: int_32
+  graphql:
+    typeName: time_entries
+    inputTypeName: time_entries_input
+  dataConnectorTypeMapping:
+    - dataConnectorName: mypostgres_promptql
+      dataConnectorObjectType: time_entries
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: time_entries
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - created_at
+          - entry_date
+          - hours
+          - id
+          - updated_at
+          - user_id
+
+---
+kind: BooleanExpressionType
+version: v1
+definition:
+  name: time_entries_bool_exp
+  operand:
+    object:
+      type: time_entries
+      comparableFields:
+        - fieldName: created_at
+          booleanExpressionType: timestamp_without_time_zone_bool_exp
+        - fieldName: entry_date
+          booleanExpressionType: date_bool_exp
+        - fieldName: hours
+          booleanExpressionType: decimal_bool_exp
+        - fieldName: id
+          booleanExpressionType: integer_bool_exp
+        - fieldName: updated_at
+          booleanExpressionType: timestamp_without_time_zone_bool_exp
+        - fieldName: user_id
+          booleanExpressionType: integer_bool_exp
+      comparableRelationships: []
+  logicalOperators:
+    enable: true
+  isNull:
+    enable: true
+  graphql:
+    typeName: time_entries_bool_exp
+
+---
+kind: AggregateExpression
+version: v1
+definition:
+  name: time_entries_agg_exp
+  operand:
+    object:
+      aggregatedType: time_entries
+      aggregatableFields:
+        - fieldName: created_at
+          aggregateExpression: timestamp_without_time_zone_agg_exp
+        - fieldName: entry_date
+          aggregateExpression: date_agg_exp
+        - fieldName: hours
+          aggregateExpression: decimal_agg_exp
+        - fieldName: id
+          aggregateExpression: integer_agg_exp
+        - fieldName: updated_at
+          aggregateExpression: timestamp_without_time_zone_agg_exp
+        - fieldName: user_id
+          aggregateExpression: integer_agg_exp
+  count:
+    enable: true
+  graphql:
+    selectTypeName: time_entries_agg_exp
+
+---
+kind: OrderByExpression
+version: v1
+definition:
+  name: time_entries_order_by_exp
+  operand:
+    object:
+      orderedType: time_entries
+      orderableFields:
+        - fieldName: created_at
+          orderByExpression: timestamp_order_by_exp
+        - fieldName: entry_date
+          orderByExpression: date_order_by_exp
+        - fieldName: hours
+          orderByExpression: bigdecimal_order_by_exp
+        - fieldName: id
+          orderByExpression: int_32_order_by_exp
+        - fieldName: updated_at
+          orderByExpression: timestamp_order_by_exp
+        - fieldName: user_id
+          orderByExpression: int_32_order_by_exp
+      orderableRelationships: []
+  graphql:
+    expressionTypeName: time_entries_order_by_exp
+
+---
+kind: Model
+version: v2
+definition:
+  name: time_entries
+  objectType: time_entries
+  source:
+    dataConnectorName: mypostgres_promptql
+    collection: time_entries
+  filterExpressionType: time_entries_bool_exp
+  aggregateExpression: time_entries_agg_exp
+  orderByExpression: time_entries_order_by_exp
+  graphql:
+    selectMany:
+      queryRootField: time_entries
+      subscription:
+        rootField: time_entries
+    selectUniques:
+      - queryRootField: time_entries_by_id
+        uniqueIdentifier:
+          - id
+        subscription:
+          rootField: time_entries_by_id
+    filterInputTypeName: time_entries_filter_input
+    aggregate:
+      queryRootField: time_entries_aggregate
+      subscription:
+        rootField: time_entries_aggregate
+
+---
+kind: ModelPermissions
+version: v1
+definition:
+  modelName: time_entries
+  permissions:
+    - role: admin
+      select:
+        filter: null
+        allowSubscriptions: true
+

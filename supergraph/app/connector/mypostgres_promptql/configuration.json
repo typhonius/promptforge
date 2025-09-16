@@ -1,0 +1,632 @@
+{
+    "version": "v2",
+    "connection_uri": {
+        "variable": "JDBC_URL"
+    },
+    "tables": [
+        {
+            "name": "project_custom_fields",
+            "description": null,
+            "category": "TABLE",
+            "columns": [
+                {
+                    "name": "id",
+                    "nullable": false,
+                    "auto_increment": true,
+                    "is_primarykey": true,
+                    "data": {
+                        "database_type": "integer"
+                    }
+                },
+                {
+                    "name": "project_id",
+                    "nullable": true,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "integer"
+                    }
+                },
+                {
+                    "name": "field_name",
+                    "nullable": false,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "character_varying",
+                        "metadata": {
+                            "type": "length",
+                            "length": 100
+                        }
+                    }
+                },
+                {
+                    "name": "field_value",
+                    "nullable": true,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "text"
+                    }
+                },
+                {
+                    "name": "field_type",
+                    "nullable": true,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "character_varying",
+                        "metadata": {
+                            "type": "length",
+                            "length": 50
+                        }
+                    }
+                },
+                {
+                    "name": "created_at",
+                    "nullable": true,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "timestamp_without_time_zone"
+                    }
+                },
+                {
+                    "name": "updated_at",
+                    "nullable": true,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "timestamp_without_time_zone"
+                    }
+                }
+            ],
+            "primary_keys": [
+                "id"
+            ],
+            "foreign_keys": {
+                "project_custom_fields_project_id_fkey": {
+                    "column_mapping": {
+                        "project_id": "id"
+                    },
+                    "foreign_collection": "projects"
+                }
+            }
+        },
+        {
+            "name": "project_health_history",
+            "description": null,
+            "category": "TABLE",
+            "columns": [
+                {
+                    "name": "id",
+                    "nullable": false,
+                    "auto_increment": true,
+                    "is_primarykey": true,
+                    "data": {
+                        "database_type": "integer"
+                    }
+                },
+                {
+                    "name": "project_id",
+                    "nullable": true,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "integer"
+                    }
+                },
+                {
+                    "name": "health",
+                    "nullable": false,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "character_varying",
+                        "metadata": {
+                            "type": "length",
+                            "length": 20
+                        }
+                    }
+                },
+                {
+                    "name": "changed_by",
+                    "nullable": true,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "integer"
+                    }
+                },
+                {
+                    "name": "change_reason",
+                    "nullable": true,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "text"
+                    }
+                },
+                {
+                    "name": "created_at",
+                    "nullable": true,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "timestamp_without_time_zone"
+                    }
+                }
+            ],
+            "primary_keys": [
+                "id"
+            ],
+            "foreign_keys": {
+                "project_health_history_changed_by_fkey": {
+                    "column_mapping": {
+                        "changed_by": "id"
+                    },
+                    "foreign_collection": "users"
+                },
+                "project_health_history_project_id_fkey": {
+                    "column_mapping": {
+                        "project_id": "id"
+                    },
+                    "foreign_collection": "projects"
+                }
+            }
+        },
+        {
+            "name": "project_notes",
+            "description": null,
+            "category": "TABLE",
+            "columns": [
+                {
+                    "name": "id",
+                    "nullable": false,
+                    "auto_increment": true,
+                    "is_primarykey": true,
+                    "data": {
+                        "database_type": "integer"
+                    }
+                },
+                {
+                    "name": "project_id",
+                    "nullable": true,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "integer"
+                    }
+                },
+                {
+                    "name": "note_text",
+                    "nullable": true,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "text"
+                    }
+                },
+                {
+                    "name": "created_by",
+                    "nullable": true,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "integer"
+                    }
+                },
+                {
+                    "name": "created_at",
+                    "nullable": true,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "timestamp_without_time_zone"
+                    }
+                },
+                {
+                    "name": "updated_at",
+                    "nullable": true,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "timestamp_without_time_zone"
+                    }
+                }
+            ],
+            "primary_keys": [
+                "id"
+            ],
+            "foreign_keys": {
+                "project_notes_created_by_fkey": {
+                    "column_mapping": {
+                        "created_by": "id"
+                    },
+                    "foreign_collection": "users"
+                },
+                "project_notes_project_id_fkey": {
+                    "column_mapping": {
+                        "project_id": "id"
+                    },
+                    "foreign_collection": "projects"
+                }
+            }
+        },
+        {
+            "name": "projects",
+            "description": null,
+            "category": "TABLE",
+            "columns": [
+                {
+                    "name": "id",
+                    "nullable": false,
+                    "auto_increment": true,
+                    "is_primarykey": true,
+                    "data": {
+                        "database_type": "integer"
+                    }
+                },
+                {
+                    "name": "project_name",
+                    "nullable": false,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "character_varying",
+                        "metadata": {
+                            "type": "length",
+                            "length": 255
+                        }
+                    }
+                },
+                {
+                    "name": "tier1_owner_id",
+                    "nullable": true,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "integer"
+                    }
+                },
+                {
+                    "name": "tier2_owner_id",
+                    "nullable": true,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "integer"
+                    }
+                },
+                {
+                    "name": "tier3_owners",
+                    "nullable": true,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "text"
+                    }
+                },
+                {
+                    "name": "status",
+                    "nullable": true,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "character_varying",
+                        "metadata": {
+                            "type": "length",
+                            "length": 50
+                        }
+                    }
+                },
+                {
+                    "name": "health",
+                    "nullable": true,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "character_varying",
+                        "metadata": {
+                            "type": "length",
+                            "length": 20
+                        }
+                    }
+                },
+                {
+                    "name": "arr_value",
+                    "nullable": true,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "numeric",
+                        "metadata": {
+                            "type": "numeric",
+                            "precision": 12,
+                            "scale": 2
+                        }
+                    }
+                },
+                {
+                    "name": "close_date",
+                    "nullable": true,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "date"
+                    }
+                },
+                {
+                    "name": "start_date",
+                    "nullable": true,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "date"
+                    }
+                },
+                {
+                    "name": "due_date",
+                    "nullable": true,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "date"
+                    }
+                },
+                {
+                    "name": "risk_description",
+                    "nullable": true,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "text"
+                    }
+                },
+                {
+                    "name": "ask_description",
+                    "nullable": true,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "text"
+                    }
+                },
+                {
+                    "name": "impact_description",
+                    "nullable": true,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "text"
+                    }
+                },
+                {
+                    "name": "is_closed",
+                    "nullable": true,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "boolean"
+                    }
+                },
+                {
+                    "name": "template_id",
+                    "nullable": true,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "integer"
+                    }
+                },
+                {
+                    "name": "created_at",
+                    "nullable": true,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "timestamp_without_time_zone"
+                    }
+                },
+                {
+                    "name": "updated_at",
+                    "nullable": true,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "timestamp_without_time_zone"
+                    }
+                }
+            ],
+            "primary_keys": [
+                "id"
+            ],
+            "foreign_keys": {
+                "projects_tier1_owner_id_fkey": {
+                    "column_mapping": {
+                        "tier1_owner_id": "id"
+                    },
+                    "foreign_collection": "users"
+                },
+                "projects_tier2_owner_id_fkey": {
+                    "column_mapping": {
+                        "tier2_owner_id": "id"
+                    },
+                    "foreign_collection": "users"
+                }
+            }
+        },
+        {
+            "name": "time_entries",
+            "description": null,
+            "category": "TABLE",
+            "columns": [
+                {
+                    "name": "id",
+                    "nullable": false,
+                    "auto_increment": true,
+                    "is_primarykey": true,
+                    "data": {
+                        "database_type": "integer"
+                    }
+                },
+                {
+                    "name": "user_id",
+                    "nullable": true,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "integer"
+                    }
+                },
+                {
+                    "name": "entry_date",
+                    "nullable": false,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "date"
+                    }
+                },
+                {
+                    "name": "hours",
+                    "nullable": false,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "numeric",
+                        "metadata": {
+                            "type": "numeric",
+                            "precision": 4,
+                            "scale": 2
+                        }
+                    }
+                },
+                {
+                    "name": "created_at",
+                    "nullable": true,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "timestamp_without_time_zone"
+                    }
+                },
+                {
+                    "name": "updated_at",
+                    "nullable": true,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "timestamp_without_time_zone"
+                    }
+                }
+            ],
+            "primary_keys": [
+                "id"
+            ],
+            "foreign_keys": {
+                "time_entries_user_id_fkey": {
+                    "column_mapping": {
+                        "user_id": "id"
+                    },
+                    "foreign_collection": "users"
+                }
+            }
+        },
+        {
+            "name": "users",
+            "description": null,
+            "category": "TABLE",
+            "columns": [
+                {
+                    "name": "id",
+                    "nullable": false,
+                    "auto_increment": true,
+                    "is_primarykey": true,
+                    "data": {
+                        "database_type": "integer"
+                    }
+                },
+                {
+                    "name": "first_name",
+                    "nullable": false,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "character_varying",
+                        "metadata": {
+                            "type": "length",
+                            "length": 100
+                        }
+                    }
+                },
+                {
+                    "name": "last_name",
+                    "nullable": false,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "character_varying",
+                        "metadata": {
+                            "type": "length",
+                            "length": 100
+                        }
+                    }
+                },
+                {
+                    "name": "email",
+                    "nullable": true,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "character_varying",
+                        "metadata": {
+                            "type": "length",
+                            "length": 255
+                        }
+                    }
+                },
+                {
+                    "name": "tier",
+                    "nullable": true,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "integer"
+                    }
+                },
+                {
+                    "name": "is_active",
+                    "nullable": true,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "boolean"
+                    }
+                },
+                {
+                    "name": "created_at",
+                    "nullable": true,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "timestamp_without_time_zone"
+                    }
+                },
+                {
+                    "name": "updated_at",
+                    "nullable": true,
+                    "auto_increment": false,
+                    "is_primarykey": false,
+                    "data": {
+                        "database_type": "timestamp_without_time_zone"
+                    }
+                }
+            ],
+            "primary_keys": [
+                "id"
+            ],
+            "foreign_keys": {}
+        }
+    ]
+}

@@ -1,0 +1,161 @@
+---
+kind: ObjectType
+version: v1
+definition:
+  name: project_notes
+  fields:
+    - name: created_at
+      type: timestamp
+    - name: created_by
+      type: int_32
+    - name: id
+      type: int_32!
+    - name: note_text
+      type: string
+    - name: project_id
+      type: int_32
+    - name: updated_at
+      type: timestamp
+  graphql:
+    typeName: project_notes
+    inputTypeName: project_notes_input
+  dataConnectorTypeMapping:
+    - dataConnectorName: mypostgres_promptql
+      dataConnectorObjectType: project_notes
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: project_notes
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - created_at
+          - created_by
+          - id
+          - note_text
+          - project_id
+          - updated_at
+
+---
+kind: BooleanExpressionType
+version: v1
+definition:
+  name: project_notes_bool_exp
+  operand:
+    object:
+      type: project_notes
+      comparableFields:
+        - fieldName: created_at
+          booleanExpressionType: timestamp_without_time_zone_bool_exp
+        - fieldName: created_by
+          booleanExpressionType: integer_bool_exp
+        - fieldName: id
+          booleanExpressionType: integer_bool_exp
+        - fieldName: note_text
+          booleanExpressionType: text_bool_exp
+        - fieldName: project_id
+          booleanExpressionType: integer_bool_exp
+        - fieldName: updated_at
+          booleanExpressionType: timestamp_without_time_zone_bool_exp
+      comparableRelationships: []
+  logicalOperators:
+    enable: true
+  isNull:
+    enable: true
+  graphql:
+    typeName: project_notes_bool_exp
+
+---
+kind: AggregateExpression
+version: v1
+definition:
+  name: project_notes_agg_exp
+  operand:
+    object:
+      aggregatedType: project_notes
+      aggregatableFields:
+        - fieldName: created_at
+          aggregateExpression: timestamp_without_time_zone_agg_exp
+        - fieldName: created_by
+          aggregateExpression: integer_agg_exp
+        - fieldName: id
+          aggregateExpression: integer_agg_exp
+        - fieldName: note_text
+          aggregateExpression: text_agg_exp
+        - fieldName: project_id
+          aggregateExpression: integer_agg_exp
+        - fieldName: updated_at
+          aggregateExpression: timestamp_without_time_zone_agg_exp
+  count:
+    enable: true
+  graphql:
+    selectTypeName: project_notes_agg_exp
+
+---
+kind: OrderByExpression
+version: v1
+definition:
+  name: project_notes_order_by_exp
+  operand:
+    object:
+      orderedType: project_notes
+      orderableFields:
+        - fieldName: created_at
+          orderByExpression: timestamp_order_by_exp
+        - fieldName: created_by
+          orderByExpression: int_32_order_by_exp
+        - fieldName: id
+          orderByExpression: int_32_order_by_exp
+        - fieldName: note_text
+          orderByExpression: string_order_by_exp
+        - fieldName: project_id
+          orderByExpression: int_32_order_by_exp
+        - fieldName: updated_at
+          orderByExpression: timestamp_order_by_exp
+      orderableRelationships: []
+  graphql:
+    expressionTypeName: project_notes_order_by_exp
+
+---
+kind: Model
+version: v2
+definition:
+  name: project_notes
+  objectType: project_notes
+  source:
+    dataConnectorName: mypostgres_promptql
+    collection: project_notes
+  filterExpressionType: project_notes_bool_exp
+  aggregateExpression: project_notes_agg_exp
+  orderByExpression: project_notes_order_by_exp
+  graphql:
+    selectMany:
+      queryRootField: project_notes
+      subscription:
+        rootField: project_notes
+    selectUniques:
+      - queryRootField: project_notes_by_id
+        uniqueIdentifier:
+          - id
+        subscription:
+          rootField: project_notes_by_id
+    filterInputTypeName: project_notes_filter_input
+    aggregate:
+      queryRootField: project_notes_aggregate
+      subscription:
+        rootField: project_notes_aggregate
+
+---
+kind: ModelPermissions
+version: v1
+definition:
+  modelName: project_notes
+  permissions:
+    - role: admin
+      select:
+        filter: null
+        allowSubscriptions: true
+

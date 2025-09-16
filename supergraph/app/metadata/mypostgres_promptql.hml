@@ -1,0 +1,3332 @@
+kind: DataConnectorLink
+version: v1
+definition:
+  name: mypostgres_promptql
+  url:
+    readWriteUrls:
+      read:
+        valueFromEnv: APP_MYPOSTGRES_PROMPTQL_READ_URL
+      write:
+        valueFromEnv: APP_MYPOSTGRES_PROMPTQL_WRITE_URL
+  headers:
+    Authorization:
+      valueFromEnv: APP_MYPOSTGRES_PROMPTQL_AUTHORIZATION_HEADER
+  schema:
+    version: v0.2
+    schema:
+      collections:
+        - arguments: {}
+          name: project_custom_fields
+          type: project_custom_fields
+          uniqueness_constraints:
+            primary_key:
+              unique_columns:
+                - id
+        - arguments: {}
+          name: project_health_history
+          type: project_health_history
+          uniqueness_constraints:
+            primary_key:
+              unique_columns:
+                - id
+        - arguments: {}
+          name: project_notes
+          type: project_notes
+          uniqueness_constraints:
+            primary_key:
+              unique_columns:
+                - id
+        - arguments: {}
+          name: projects
+          type: projects
+          uniqueness_constraints:
+            primary_key:
+              unique_columns:
+                - id
+        - arguments: {}
+          name: time_entries
+          type: time_entries
+          uniqueness_constraints:
+            primary_key:
+              unique_columns:
+                - id
+        - arguments: {}
+          name: users
+          type: users
+          uniqueness_constraints:
+            primary_key:
+              unique_columns:
+                - id
+      functions: []
+      object_types:
+        bigint_set_input:
+          description: Wrapper for setting scalar bigint
+          fields:
+            value:
+              arguments: {}
+              description: New value for scalar bigint
+              type:
+                type: nullable
+                underlying_type:
+                  name: bigint
+                  type: named
+          foreign_keys: {}
+        boolean_set_input:
+          description: Wrapper for setting scalar boolean
+          fields:
+            value:
+              arguments: {}
+              description: New value for scalar boolean
+              type:
+                type: nullable
+                underlying_type:
+                  name: boolean
+                  type: named
+          foreign_keys: {}
+        character_varying_set_input:
+          description: Wrapper for setting scalar character_varying
+          fields:
+            value:
+              arguments: {}
+              description: New value for scalar character_varying
+              type:
+                type: nullable
+                underlying_type:
+                  name: character_varying
+                  type: named
+          foreign_keys: {}
+        date_set_input:
+          description: Wrapper for setting scalar date
+          fields:
+            value:
+              arguments: {}
+              description: New value for scalar date
+              type:
+                type: nullable
+                underlying_type:
+                  name: date
+                  type: named
+          foreign_keys: {}
+        decimal_set_input:
+          description: Wrapper for setting scalar decimal
+          fields:
+            value:
+              arguments: {}
+              description: New value for scalar decimal
+              type:
+                type: nullable
+                underlying_type:
+                  name: decimal
+                  type: named
+          foreign_keys: {}
+        delete_project_custom_fields_result:
+          description: delete from project_custom_fields result
+          fields:
+            affected_rows:
+              arguments: {}
+              description: Number of affected rows
+              type:
+                name: int
+                type: named
+            returning:
+              arguments: {}
+              description: Objects that were affected by delete
+              type:
+                element_type:
+                  name: project_custom_fields
+                  type: named
+                type: array
+          foreign_keys: {}
+        delete_project_health_history_result:
+          description: delete from project_health_history result
+          fields:
+            affected_rows:
+              arguments: {}
+              description: Number of affected rows
+              type:
+                name: int
+                type: named
+            returning:
+              arguments: {}
+              description: Objects that were affected by delete
+              type:
+                element_type:
+                  name: project_health_history
+                  type: named
+                type: array
+          foreign_keys: {}
+        delete_project_notes_result:
+          description: delete from project_notes result
+          fields:
+            affected_rows:
+              arguments: {}
+              description: Number of affected rows
+              type:
+                name: int
+                type: named
+            returning:
+              arguments: {}
+              description: Objects that were affected by delete
+              type:
+                element_type:
+                  name: project_notes
+                  type: named
+                type: array
+          foreign_keys: {}
+        delete_projects_result:
+          description: delete from projects result
+          fields:
+            affected_rows:
+              arguments: {}
+              description: Number of affected rows
+              type:
+                name: int
+                type: named
+            returning:
+              arguments: {}
+              description: Objects that were affected by delete
+              type:
+                element_type:
+                  name: projects
+                  type: named
+                type: array
+          foreign_keys: {}
+        delete_time_entries_result:
+          description: delete from time_entries result
+          fields:
+            affected_rows:
+              arguments: {}
+              description: Number of affected rows
+              type:
+                name: int
+                type: named
+            returning:
+              arguments: {}
+              description: Objects that were affected by delete
+              type:
+                element_type:
+                  name: time_entries
+                  type: named
+                type: array
+          foreign_keys: {}
+        delete_users_result:
+          description: delete from users result
+          fields:
+            affected_rows:
+              arguments: {}
+              description: Number of affected rows
+              type:
+                name: int
+                type: named
+            returning:
+              arguments: {}
+              description: Objects that were affected by delete
+              type:
+                element_type:
+                  name: users
+                  type: named
+                type: array
+          foreign_keys: {}
+        insert_project_custom_fields_result:
+          description: insert from project_custom_fields result
+          fields:
+            affected_rows:
+              arguments: {}
+              description: Number of affected rows
+              type:
+                name: int
+                type: named
+            returning:
+              arguments: {}
+              description: Objects that were affected by insert
+              type:
+                element_type:
+                  name: project_custom_fields
+                  type: named
+                type: array
+          foreign_keys: {}
+        insert_project_health_history_result:
+          description: insert from project_health_history result
+          fields:
+            affected_rows:
+              arguments: {}
+              description: Number of affected rows
+              type:
+                name: int
+                type: named
+            returning:
+              arguments: {}
+              description: Objects that were affected by insert
+              type:
+                element_type:
+                  name: project_health_history
+                  type: named
+                type: array
+          foreign_keys: {}
+        insert_project_notes_result:
+          description: insert from project_notes result
+          fields:
+            affected_rows:
+              arguments: {}
+              description: Number of affected rows
+              type:
+                name: int
+                type: named
+            returning:
+              arguments: {}
+              description: Objects that were affected by insert
+              type:
+                element_type:
+                  name: project_notes
+                  type: named
+                type: array
+          foreign_keys: {}
+        insert_projects_result:
+          description: insert from projects result
+          fields:
+            affected_rows:
+              arguments: {}
+              description: Number of affected rows
+              type:
+                name: int
+                type: named
+            returning:
+              arguments: {}
+              description: Objects that were affected by insert
+              type:
+                element_type:
+                  name: projects
+                  type: named
+                type: array
+          foreign_keys: {}
+        insert_time_entries_result:
+          description: insert from time_entries result
+          fields:
+            affected_rows:
+              arguments: {}
+              description: Number of affected rows
+              type:
+                name: int
+                type: named
+            returning:
+              arguments: {}
+              description: Objects that were affected by insert
+              type:
+                element_type:
+                  name: time_entries
+                  type: named
+                type: array
+          foreign_keys: {}
+        insert_users_result:
+          description: insert from users result
+          fields:
+            affected_rows:
+              arguments: {}
+              description: Number of affected rows
+              type:
+                name: int
+                type: named
+            returning:
+              arguments: {}
+              description: Objects that were affected by insert
+              type:
+                element_type:
+                  name: users
+                  type: named
+                type: array
+          foreign_keys: {}
+        int_set_input:
+          description: Wrapper for setting scalar int
+          fields:
+            value:
+              arguments: {}
+              description: New value for scalar int
+              type:
+                type: nullable
+                underlying_type:
+                  name: int
+                  type: named
+          foreign_keys: {}
+        integer_set_input:
+          description: Wrapper for setting scalar integer
+          fields:
+            value:
+              arguments: {}
+              description: New value for scalar integer
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer
+                  type: named
+          foreign_keys: {}
+        project_custom_fields:
+          fields:
+            created_at:
+              arguments: {}
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamp_without_time_zone
+                  type: named
+            field_name:
+              arguments: {}
+              type:
+                name: character_varying
+                type: named
+            field_type:
+              arguments: {}
+              type:
+                type: nullable
+                underlying_type:
+                  name: character_varying
+                  type: named
+            field_value:
+              arguments: {}
+              type:
+                type: nullable
+                underlying_type:
+                  name: text
+                  type: named
+            id:
+              arguments: {}
+              type:
+                name: integer
+                type: named
+            project_id:
+              arguments: {}
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer
+                  type: named
+            updated_at:
+              arguments: {}
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamp_without_time_zone
+                  type: named
+          foreign_keys:
+            project_custom_fields_project_id_fkey:
+              column_mapping:
+                project_id:
+                  - id
+              foreign_collection: projects
+        project_custom_fields_insert_input:
+          description: Input type for inserting into project_custom_fields
+          fields:
+            created_at:
+              arguments: {}
+              description: New value for project_custom_fields.created_at
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamp_without_time_zone
+                  type: named
+            field_name:
+              arguments: {}
+              description: New value for project_custom_fields.field_name
+              type:
+                name: character_varying
+                type: named
+            field_type:
+              arguments: {}
+              description: New value for project_custom_fields.field_type
+              type:
+                type: nullable
+                underlying_type:
+                  name: character_varying
+                  type: named
+            field_value:
+              arguments: {}
+              description: New value for project_custom_fields.field_value
+              type:
+                type: nullable
+                underlying_type:
+                  name: text
+                  type: named
+            id:
+              arguments: {}
+              description: New value for project_custom_fields.id
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer
+                  type: named
+            project_id:
+              arguments: {}
+              description: New value for project_custom_fields.project_id
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer
+                  type: named
+            updated_at:
+              arguments: {}
+              description: New value for project_custom_fields.updated_at
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamp_without_time_zone
+                  type: named
+          foreign_keys: {}
+        project_custom_fields_set_input:
+          description: Input type for updating project_custom_fields
+          fields:
+            created_at:
+              arguments: {}
+              description: New value wrapper for project_custom_fields.created_at
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamp_without_time_zone_set_input
+                  type: named
+            field_name:
+              arguments: {}
+              description: New value wrapper for project_custom_fields.field_name
+              type:
+                type: nullable
+                underlying_type:
+                  name: character_varying_set_input
+                  type: named
+            field_type:
+              arguments: {}
+              description: New value wrapper for project_custom_fields.field_type
+              type:
+                type: nullable
+                underlying_type:
+                  name: character_varying_set_input
+                  type: named
+            field_value:
+              arguments: {}
+              description: New value wrapper for project_custom_fields.field_value
+              type:
+                type: nullable
+                underlying_type:
+                  name: text_set_input
+                  type: named
+            id:
+              arguments: {}
+              description: New value wrapper for project_custom_fields.id
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer_set_input
+                  type: named
+            project_id:
+              arguments: {}
+              description: New value wrapper for project_custom_fields.project_id
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer_set_input
+                  type: named
+            updated_at:
+              arguments: {}
+              description: New value wrapper for project_custom_fields.updated_at
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamp_without_time_zone_set_input
+                  type: named
+          foreign_keys: {}
+        project_health_history:
+          fields:
+            change_reason:
+              arguments: {}
+              type:
+                type: nullable
+                underlying_type:
+                  name: text
+                  type: named
+            changed_by:
+              arguments: {}
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer
+                  type: named
+            created_at:
+              arguments: {}
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamp_without_time_zone
+                  type: named
+            health:
+              arguments: {}
+              type:
+                name: character_varying
+                type: named
+            id:
+              arguments: {}
+              type:
+                name: integer
+                type: named
+            project_id:
+              arguments: {}
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer
+                  type: named
+          foreign_keys:
+            project_health_history_changed_by_fkey:
+              column_mapping:
+                changed_by:
+                  - id
+              foreign_collection: users
+            project_health_history_project_id_fkey:
+              column_mapping:
+                project_id:
+                  - id
+              foreign_collection: projects
+        project_health_history_insert_input:
+          description: Input type for inserting into project_health_history
+          fields:
+            change_reason:
+              arguments: {}
+              description: New value for project_health_history.change_reason
+              type:
+                type: nullable
+                underlying_type:
+                  name: text
+                  type: named
+            changed_by:
+              arguments: {}
+              description: New value for project_health_history.changed_by
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer
+                  type: named
+            created_at:
+              arguments: {}
+              description: New value for project_health_history.created_at
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamp_without_time_zone
+                  type: named
+            health:
+              arguments: {}
+              description: New value for project_health_history.health
+              type:
+                name: character_varying
+                type: named
+            id:
+              arguments: {}
+              description: New value for project_health_history.id
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer
+                  type: named
+            project_id:
+              arguments: {}
+              description: New value for project_health_history.project_id
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer
+                  type: named
+          foreign_keys: {}
+        project_health_history_set_input:
+          description: Input type for updating project_health_history
+          fields:
+            change_reason:
+              arguments: {}
+              description: New value wrapper for project_health_history.change_reason
+              type:
+                type: nullable
+                underlying_type:
+                  name: text_set_input
+                  type: named
+            changed_by:
+              arguments: {}
+              description: New value wrapper for project_health_history.changed_by
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer_set_input
+                  type: named
+            created_at:
+              arguments: {}
+              description: New value wrapper for project_health_history.created_at
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamp_without_time_zone_set_input
+                  type: named
+            health:
+              arguments: {}
+              description: New value wrapper for project_health_history.health
+              type:
+                type: nullable
+                underlying_type:
+                  name: character_varying_set_input
+                  type: named
+            id:
+              arguments: {}
+              description: New value wrapper for project_health_history.id
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer_set_input
+                  type: named
+            project_id:
+              arguments: {}
+              description: New value wrapper for project_health_history.project_id
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer_set_input
+                  type: named
+          foreign_keys: {}
+        project_notes:
+          fields:
+            created_at:
+              arguments: {}
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamp_without_time_zone
+                  type: named
+            created_by:
+              arguments: {}
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer
+                  type: named
+            id:
+              arguments: {}
+              type:
+                name: integer
+                type: named
+            note_text:
+              arguments: {}
+              type:
+                type: nullable
+                underlying_type:
+                  name: text
+                  type: named
+            project_id:
+              arguments: {}
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer
+                  type: named
+            updated_at:
+              arguments: {}
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamp_without_time_zone
+                  type: named
+          foreign_keys:
+            project_notes_created_by_fkey:
+              column_mapping:
+                created_by:
+                  - id
+              foreign_collection: users
+            project_notes_project_id_fkey:
+              column_mapping:
+                project_id:
+                  - id
+              foreign_collection: projects
+        project_notes_insert_input:
+          description: Input type for inserting into project_notes
+          fields:
+            created_at:
+              arguments: {}
+              description: New value for project_notes.created_at
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamp_without_time_zone
+                  type: named
+            created_by:
+              arguments: {}
+              description: New value for project_notes.created_by
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer
+                  type: named
+            id:
+              arguments: {}
+              description: New value for project_notes.id
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer
+                  type: named
+            note_text:
+              arguments: {}
+              description: New value for project_notes.note_text
+              type:
+                type: nullable
+                underlying_type:
+                  name: text
+                  type: named
+            project_id:
+              arguments: {}
+              description: New value for project_notes.project_id
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer
+                  type: named
+            updated_at:
+              arguments: {}
+              description: New value for project_notes.updated_at
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamp_without_time_zone
+                  type: named
+          foreign_keys: {}
+        project_notes_set_input:
+          description: Input type for updating project_notes
+          fields:
+            created_at:
+              arguments: {}
+              description: New value wrapper for project_notes.created_at
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamp_without_time_zone_set_input
+                  type: named
+            created_by:
+              arguments: {}
+              description: New value wrapper for project_notes.created_by
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer_set_input
+                  type: named
+            id:
+              arguments: {}
+              description: New value wrapper for project_notes.id
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer_set_input
+                  type: named
+            note_text:
+              arguments: {}
+              description: New value wrapper for project_notes.note_text
+              type:
+                type: nullable
+                underlying_type:
+                  name: text_set_input
+                  type: named
+            project_id:
+              arguments: {}
+              description: New value wrapper for project_notes.project_id
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer_set_input
+                  type: named
+            updated_at:
+              arguments: {}
+              description: New value wrapper for project_notes.updated_at
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamp_without_time_zone_set_input
+                  type: named
+          foreign_keys: {}
+        projects:
+          fields:
+            arr_value:
+              arguments: {}
+              type:
+                type: nullable
+                underlying_type:
+                  name: decimal
+                  type: named
+            ask_description:
+              arguments: {}
+              type:
+                type: nullable
+                underlying_type:
+                  name: text
+                  type: named
+            close_date:
+              arguments: {}
+              type:
+                type: nullable
+                underlying_type:
+                  name: date
+                  type: named
+            created_at:
+              arguments: {}
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamp_without_time_zone
+                  type: named
+            due_date:
+              arguments: {}
+              type:
+                type: nullable
+                underlying_type:
+                  name: date
+                  type: named
+            health:
+              arguments: {}
+              type:
+                type: nullable
+                underlying_type:
+                  name: character_varying
+                  type: named
+            id:
+              arguments: {}
+              type:
+                name: integer
+                type: named
+            impact_description:
+              arguments: {}
+              type:
+                type: nullable
+                underlying_type:
+                  name: text
+                  type: named
+            is_closed:
+              arguments: {}
+              type:
+                type: nullable
+                underlying_type:
+                  name: boolean
+                  type: named
+            project_name:
+              arguments: {}
+              type:
+                name: character_varying
+                type: named
+            risk_description:
+              arguments: {}
+              type:
+                type: nullable
+                underlying_type:
+                  name: text
+                  type: named
+            start_date:
+              arguments: {}
+              type:
+                type: nullable
+                underlying_type:
+                  name: date
+                  type: named
+            status:
+              arguments: {}
+              type:
+                type: nullable
+                underlying_type:
+                  name: character_varying
+                  type: named
+            template_id:
+              arguments: {}
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer
+                  type: named
+            tier1_owner_id:
+              arguments: {}
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer
+                  type: named
+            tier2_owner_id:
+              arguments: {}
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer
+                  type: named
+            tier3_owners:
+              arguments: {}
+              type:
+                type: nullable
+                underlying_type:
+                  name: text
+                  type: named
+            updated_at:
+              arguments: {}
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamp_without_time_zone
+                  type: named
+          foreign_keys:
+            projects_tier1_owner_id_fkey:
+              column_mapping:
+                tier1_owner_id:
+                  - id
+              foreign_collection: users
+            projects_tier2_owner_id_fkey:
+              column_mapping:
+                tier2_owner_id:
+                  - id
+              foreign_collection: users
+        projects_insert_input:
+          description: Input type for inserting into projects
+          fields:
+            arr_value:
+              arguments: {}
+              description: New value for projects.arr_value
+              type:
+                type: nullable
+                underlying_type:
+                  name: decimal
+                  type: named
+            ask_description:
+              arguments: {}
+              description: New value for projects.ask_description
+              type:
+                type: nullable
+                underlying_type:
+                  name: text
+                  type: named
+            close_date:
+              arguments: {}
+              description: New value for projects.close_date
+              type:
+                type: nullable
+                underlying_type:
+                  name: date
+                  type: named
+            created_at:
+              arguments: {}
+              description: New value for projects.created_at
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamp_without_time_zone
+                  type: named
+            due_date:
+              arguments: {}
+              description: New value for projects.due_date
+              type:
+                type: nullable
+                underlying_type:
+                  name: date
+                  type: named
+            health:
+              arguments: {}
+              description: New value for projects.health
+              type:
+                type: nullable
+                underlying_type:
+                  name: character_varying
+                  type: named
+            id:
+              arguments: {}
+              description: New value for projects.id
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer
+                  type: named
+            impact_description:
+              arguments: {}
+              description: New value for projects.impact_description
+              type:
+                type: nullable
+                underlying_type:
+                  name: text
+                  type: named
+            is_closed:
+              arguments: {}
+              description: New value for projects.is_closed
+              type:
+                type: nullable
+                underlying_type:
+                  name: boolean
+                  type: named
+            project_name:
+              arguments: {}
+              description: New value for projects.project_name
+              type:
+                name: character_varying
+                type: named
+            risk_description:
+              arguments: {}
+              description: New value for projects.risk_description
+              type:
+                type: nullable
+                underlying_type:
+                  name: text
+                  type: named
+            start_date:
+              arguments: {}
+              description: New value for projects.start_date
+              type:
+                type: nullable
+                underlying_type:
+                  name: date
+                  type: named
+            status:
+              arguments: {}
+              description: New value for projects.status
+              type:
+                type: nullable
+                underlying_type:
+                  name: character_varying
+                  type: named
+            template_id:
+              arguments: {}
+              description: New value for projects.template_id
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer
+                  type: named
+            tier1_owner_id:
+              arguments: {}
+              description: New value for projects.tier1_owner_id
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer
+                  type: named
+            tier2_owner_id:
+              arguments: {}
+              description: New value for projects.tier2_owner_id
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer
+                  type: named
+            tier3_owners:
+              arguments: {}
+              description: New value for projects.tier3_owners
+              type:
+                type: nullable
+                underlying_type:
+                  name: text
+                  type: named
+            updated_at:
+              arguments: {}
+              description: New value for projects.updated_at
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamp_without_time_zone
+                  type: named
+          foreign_keys: {}
+        projects_set_input:
+          description: Input type for updating projects
+          fields:
+            arr_value:
+              arguments: {}
+              description: New value wrapper for projects.arr_value
+              type:
+                type: nullable
+                underlying_type:
+                  name: decimal_set_input
+                  type: named
+            ask_description:
+              arguments: {}
+              description: New value wrapper for projects.ask_description
+              type:
+                type: nullable
+                underlying_type:
+                  name: text_set_input
+                  type: named
+            close_date:
+              arguments: {}
+              description: New value wrapper for projects.close_date
+              type:
+                type: nullable
+                underlying_type:
+                  name: date_set_input
+                  type: named
+            created_at:
+              arguments: {}
+              description: New value wrapper for projects.created_at
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamp_without_time_zone_set_input
+                  type: named
+            due_date:
+              arguments: {}
+              description: New value wrapper for projects.due_date
+              type:
+                type: nullable
+                underlying_type:
+                  name: date_set_input
+                  type: named
+            health:
+              arguments: {}
+              description: New value wrapper for projects.health
+              type:
+                type: nullable
+                underlying_type:
+                  name: character_varying_set_input
+                  type: named
+            id:
+              arguments: {}
+              description: New value wrapper for projects.id
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer_set_input
+                  type: named
+            impact_description:
+              arguments: {}
+              description: New value wrapper for projects.impact_description
+              type:
+                type: nullable
+                underlying_type:
+                  name: text_set_input
+                  type: named
+            is_closed:
+              arguments: {}
+              description: New value wrapper for projects.is_closed
+              type:
+                type: nullable
+                underlying_type:
+                  name: boolean_set_input
+                  type: named
+            project_name:
+              arguments: {}
+              description: New value wrapper for projects.project_name
+              type:
+                type: nullable
+                underlying_type:
+                  name: character_varying_set_input
+                  type: named
+            risk_description:
+              arguments: {}
+              description: New value wrapper for projects.risk_description
+              type:
+                type: nullable
+                underlying_type:
+                  name: text_set_input
+                  type: named
+            start_date:
+              arguments: {}
+              description: New value wrapper for projects.start_date
+              type:
+                type: nullable
+                underlying_type:
+                  name: date_set_input
+                  type: named
+            status:
+              arguments: {}
+              description: New value wrapper for projects.status
+              type:
+                type: nullable
+                underlying_type:
+                  name: character_varying_set_input
+                  type: named
+            template_id:
+              arguments: {}
+              description: New value wrapper for projects.template_id
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer_set_input
+                  type: named
+            tier1_owner_id:
+              arguments: {}
+              description: New value wrapper for projects.tier1_owner_id
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer_set_input
+                  type: named
+            tier2_owner_id:
+              arguments: {}
+              description: New value wrapper for projects.tier2_owner_id
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer_set_input
+                  type: named
+            tier3_owners:
+              arguments: {}
+              description: New value wrapper for projects.tier3_owners
+              type:
+                type: nullable
+                underlying_type:
+                  name: text_set_input
+                  type: named
+            updated_at:
+              arguments: {}
+              description: New value wrapper for projects.updated_at
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamp_without_time_zone_set_input
+                  type: named
+          foreign_keys: {}
+        string_set_input:
+          description: Wrapper for setting scalar string
+          fields:
+            value:
+              arguments: {}
+              description: New value for scalar string
+              type:
+                type: nullable
+                underlying_type:
+                  name: string
+                  type: named
+          foreign_keys: {}
+        text_set_input:
+          description: Wrapper for setting scalar text
+          fields:
+            value:
+              arguments: {}
+              description: New value for scalar text
+              type:
+                type: nullable
+                underlying_type:
+                  name: text
+                  type: named
+          foreign_keys: {}
+        time_entries:
+          fields:
+            created_at:
+              arguments: {}
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamp_without_time_zone
+                  type: named
+            entry_date:
+              arguments: {}
+              type:
+                name: date
+                type: named
+            hours:
+              arguments: {}
+              type:
+                name: decimal
+                type: named
+            id:
+              arguments: {}
+              type:
+                name: integer
+                type: named
+            updated_at:
+              arguments: {}
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamp_without_time_zone
+                  type: named
+            user_id:
+              arguments: {}
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer
+                  type: named
+          foreign_keys:
+            time_entries_user_id_fkey:
+              column_mapping:
+                user_id:
+                  - id
+              foreign_collection: users
+        time_entries_insert_input:
+          description: Input type for inserting into time_entries
+          fields:
+            created_at:
+              arguments: {}
+              description: New value for time_entries.created_at
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamp_without_time_zone
+                  type: named
+            entry_date:
+              arguments: {}
+              description: New value for time_entries.entry_date
+              type:
+                name: date
+                type: named
+            hours:
+              arguments: {}
+              description: New value for time_entries.hours
+              type:
+                name: decimal
+                type: named
+            id:
+              arguments: {}
+              description: New value for time_entries.id
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer
+                  type: named
+            updated_at:
+              arguments: {}
+              description: New value for time_entries.updated_at
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamp_without_time_zone
+                  type: named
+            user_id:
+              arguments: {}
+              description: New value for time_entries.user_id
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer
+                  type: named
+          foreign_keys: {}
+        time_entries_set_input:
+          description: Input type for updating time_entries
+          fields:
+            created_at:
+              arguments: {}
+              description: New value wrapper for time_entries.created_at
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamp_without_time_zone_set_input
+                  type: named
+            entry_date:
+              arguments: {}
+              description: New value wrapper for time_entries.entry_date
+              type:
+                type: nullable
+                underlying_type:
+                  name: date_set_input
+                  type: named
+            hours:
+              arguments: {}
+              description: New value wrapper for time_entries.hours
+              type:
+                type: nullable
+                underlying_type:
+                  name: decimal_set_input
+                  type: named
+            id:
+              arguments: {}
+              description: New value wrapper for time_entries.id
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer_set_input
+                  type: named
+            updated_at:
+              arguments: {}
+              description: New value wrapper for time_entries.updated_at
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamp_without_time_zone_set_input
+                  type: named
+            user_id:
+              arguments: {}
+              description: New value wrapper for time_entries.user_id
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer_set_input
+                  type: named
+          foreign_keys: {}
+        timestamp_without_time_zone_set_input:
+          description: Wrapper for setting scalar timestamp_without_time_zone
+          fields:
+            value:
+              arguments: {}
+              description: New value for scalar timestamp_without_time_zone
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamp_without_time_zone
+                  type: named
+          foreign_keys: {}
+        update_project_custom_fields_result:
+          description: update from project_custom_fields result
+          fields:
+            affected_rows:
+              arguments: {}
+              description: Number of affected rows
+              type:
+                name: int
+                type: named
+            returning:
+              arguments: {}
+              description: Objects that were affected by update
+              type:
+                element_type:
+                  name: project_custom_fields
+                  type: named
+                type: array
+          foreign_keys: {}
+        update_project_health_history_result:
+          description: update from project_health_history result
+          fields:
+            affected_rows:
+              arguments: {}
+              description: Number of affected rows
+              type:
+                name: int
+                type: named
+            returning:
+              arguments: {}
+              description: Objects that were affected by update
+              type:
+                element_type:
+                  name: project_health_history
+                  type: named
+                type: array
+          foreign_keys: {}
+        update_project_notes_result:
+          description: update from project_notes result
+          fields:
+            affected_rows:
+              arguments: {}
+              description: Number of affected rows
+              type:
+                name: int
+                type: named
+            returning:
+              arguments: {}
+              description: Objects that were affected by update
+              type:
+                element_type:
+                  name: project_notes
+                  type: named
+                type: array
+          foreign_keys: {}
+        update_projects_result:
+          description: update from projects result
+          fields:
+            affected_rows:
+              arguments: {}
+              description: Number of affected rows
+              type:
+                name: int
+                type: named
+            returning:
+              arguments: {}
+              description: Objects that were affected by update
+              type:
+                element_type:
+                  name: projects
+                  type: named
+                type: array
+          foreign_keys: {}
+        update_time_entries_result:
+          description: update from time_entries result
+          fields:
+            affected_rows:
+              arguments: {}
+              description: Number of affected rows
+              type:
+                name: int
+                type: named
+            returning:
+              arguments: {}
+              description: Objects that were affected by update
+              type:
+                element_type:
+                  name: time_entries
+                  type: named
+                type: array
+          foreign_keys: {}
+        update_users_result:
+          description: update from users result
+          fields:
+            affected_rows:
+              arguments: {}
+              description: Number of affected rows
+              type:
+                name: int
+                type: named
+            returning:
+              arguments: {}
+              description: Objects that were affected by update
+              type:
+                element_type:
+                  name: users
+                  type: named
+                type: array
+          foreign_keys: {}
+        users:
+          fields:
+            created_at:
+              arguments: {}
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamp_without_time_zone
+                  type: named
+            email:
+              arguments: {}
+              type:
+                type: nullable
+                underlying_type:
+                  name: character_varying
+                  type: named
+            first_name:
+              arguments: {}
+              type:
+                name: character_varying
+                type: named
+            id:
+              arguments: {}
+              type:
+                name: integer
+                type: named
+            is_active:
+              arguments: {}
+              type:
+                type: nullable
+                underlying_type:
+                  name: boolean
+                  type: named
+            last_name:
+              arguments: {}
+              type:
+                name: character_varying
+                type: named
+            tier:
+              arguments: {}
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer
+                  type: named
+            updated_at:
+              arguments: {}
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamp_without_time_zone
+                  type: named
+          foreign_keys: {}
+        users_insert_input:
+          description: Input type for inserting into users
+          fields:
+            created_at:
+              arguments: {}
+              description: New value for users.created_at
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamp_without_time_zone
+                  type: named
+            email:
+              arguments: {}
+              description: New value for users.email
+              type:
+                type: nullable
+                underlying_type:
+                  name: character_varying
+                  type: named
+            first_name:
+              arguments: {}
+              description: New value for users.first_name
+              type:
+                name: character_varying
+                type: named
+            id:
+              arguments: {}
+              description: New value for users.id
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer
+                  type: named
+            is_active:
+              arguments: {}
+              description: New value for users.is_active
+              type:
+                type: nullable
+                underlying_type:
+                  name: boolean
+                  type: named
+            last_name:
+              arguments: {}
+              description: New value for users.last_name
+              type:
+                name: character_varying
+                type: named
+            tier:
+              arguments: {}
+              description: New value for users.tier
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer
+                  type: named
+            updated_at:
+              arguments: {}
+              description: New value for users.updated_at
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamp_without_time_zone
+                  type: named
+          foreign_keys: {}
+        users_set_input:
+          description: Input type for updating users
+          fields:
+            created_at:
+              arguments: {}
+              description: New value wrapper for users.created_at
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamp_without_time_zone_set_input
+                  type: named
+            email:
+              arguments: {}
+              description: New value wrapper for users.email
+              type:
+                type: nullable
+                underlying_type:
+                  name: character_varying_set_input
+                  type: named
+            first_name:
+              arguments: {}
+              description: New value wrapper for users.first_name
+              type:
+                type: nullable
+                underlying_type:
+                  name: character_varying_set_input
+                  type: named
+            id:
+              arguments: {}
+              description: New value wrapper for users.id
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer_set_input
+                  type: named
+            is_active:
+              arguments: {}
+              description: New value wrapper for users.is_active
+              type:
+                type: nullable
+                underlying_type:
+                  name: boolean_set_input
+                  type: named
+            last_name:
+              arguments: {}
+              description: New value wrapper for users.last_name
+              type:
+                type: nullable
+                underlying_type:
+                  name: character_varying_set_input
+                  type: named
+            tier:
+              arguments: {}
+              description: New value wrapper for users.tier
+              type:
+                type: nullable
+                underlying_type:
+                  name: integer_set_input
+                  type: named
+            updated_at:
+              arguments: {}
+              description: New value wrapper for users.updated_at
+              type:
+                type: nullable
+                underlying_type:
+                  name: timestamp_without_time_zone_set_input
+                  type: named
+          foreign_keys: {}
+      procedures:
+        - arguments:
+            objects:
+              description: Objects to insert
+              type:
+                element_type:
+                  name: project_custom_fields_insert_input
+                  type: named
+                type: array
+            returning:
+              description: Fields to return
+              type:
+                type: nullable
+                underlying_type:
+                  element_type:
+                    name: string
+                    type: named
+                  type: array
+          description: Insert into project_custom_fields
+          name: insert_project_custom_fields
+          result_type:
+            name: insert_project_custom_fields_result
+            type: named
+        - arguments:
+            returning:
+              description: Fields to return
+              type:
+                type: nullable
+                underlying_type:
+                  element_type:
+                    name: string
+                    type: named
+                  type: array
+            set:
+              description: Values to set
+              type:
+                name: project_custom_fields_set_input
+                type: named
+            where:
+              description: Filter for rows to update
+              type:
+                object_type_name: project_custom_fields
+                type: predicate
+          description: Update project_custom_fields
+          name: update_project_custom_fields
+          result_type:
+            name: update_project_custom_fields_result
+            type: named
+        - arguments:
+            returning:
+              description: Fields to return
+              type:
+                type: nullable
+                underlying_type:
+                  element_type:
+                    name: string
+                    type: named
+                  type: array
+            where:
+              description: Filter for rows to delete
+              type:
+                object_type_name: project_custom_fields
+                type: predicate
+          description: Delete from project_custom_fields
+          name: delete_project_custom_fields
+          result_type:
+            name: delete_project_custom_fields_result
+            type: named
+        - arguments:
+            objects:
+              description: Objects to insert
+              type:
+                element_type:
+                  name: project_health_history_insert_input
+                  type: named
+                type: array
+            returning:
+              description: Fields to return
+              type:
+                type: nullable
+                underlying_type:
+                  element_type:
+                    name: string
+                    type: named
+                  type: array
+          description: Insert into project_health_history
+          name: insert_project_health_history
+          result_type:
+            name: insert_project_health_history_result
+            type: named
+        - arguments:
+            returning:
+              description: Fields to return
+              type:
+                type: nullable
+                underlying_type:
+                  element_type:
+                    name: string
+                    type: named
+                  type: array
+            set:
+              description: Values to set
+              type:
+                name: project_health_history_set_input
+                type: named
+            where:
+              description: Filter for rows to update
+              type:
+                object_type_name: project_health_history
+                type: predicate
+          description: Update project_health_history
+          name: update_project_health_history
+          result_type:
+            name: update_project_health_history_result
+            type: named
+        - arguments:
+            returning:
+              description: Fields to return
+              type:
+                type: nullable
+                underlying_type:
+                  element_type:
+                    name: string
+                    type: named
+                  type: array
+            where:
+              description: Filter for rows to delete
+              type:
+                object_type_name: project_health_history
+                type: predicate
+          description: Delete from project_health_history
+          name: delete_project_health_history
+          result_type:
+            name: delete_project_health_history_result
+            type: named
+        - arguments:
+            objects:
+              description: Objects to insert
+              type:
+                element_type:
+                  name: project_notes_insert_input
+                  type: named
+                type: array
+            returning:
+              description: Fields to return
+              type:
+                type: nullable
+                underlying_type:
+                  element_type:
+                    name: string
+                    type: named
+                  type: array
+          description: Insert into project_notes
+          name: insert_project_notes
+          result_type:
+            name: insert_project_notes_result
+            type: named
+        - arguments:
+            returning:
+              description: Fields to return
+              type:
+                type: nullable
+                underlying_type:
+                  element_type:
+                    name: string
+                    type: named
+                  type: array
+            set:
+              description: Values to set
+              type:
+                name: project_notes_set_input
+                type: named
+            where:
+              description: Filter for rows to update
+              type:
+                object_type_name: project_notes
+                type: predicate
+          description: Update project_notes
+          name: update_project_notes
+          result_type:
+            name: update_project_notes_result
+            type: named
+        - arguments:
+            returning:
+              description: Fields to return
+              type:
+                type: nullable
+                underlying_type:
+                  element_type:
+                    name: string
+                    type: named
+                  type: array
+            where:
+              description: Filter for rows to delete
+              type:
+                object_type_name: project_notes
+                type: predicate
+          description: Delete from project_notes
+          name: delete_project_notes
+          result_type:
+            name: delete_project_notes_result
+            type: named
+        - arguments:
+            objects:
+              description: Objects to insert
+              type:
+                element_type:
+                  name: projects_insert_input
+                  type: named
+                type: array
+            returning:
+              description: Fields to return
+              type:
+                type: nullable
+                underlying_type:
+                  element_type:
+                    name: string
+                    type: named
+                  type: array
+          description: Insert into projects
+          name: insert_projects
+          result_type:
+            name: insert_projects_result
+            type: named
+        - arguments:
+            returning:
+              description: Fields to return
+              type:
+                type: nullable
+                underlying_type:
+                  element_type:
+                    name: string
+                    type: named
+                  type: array
+            set:
+              description: Values to set
+              type:
+                name: projects_set_input
+                type: named
+            where:
+              description: Filter for rows to update
+              type:
+                object_type_name: projects
+                type: predicate
+          description: Update projects
+          name: update_projects
+          result_type:
+            name: update_projects_result
+            type: named
+        - arguments:
+            returning:
+              description: Fields to return
+              type:
+                type: nullable
+                underlying_type:
+                  element_type:
+                    name: string
+                    type: named
+                  type: array
+            where:
+              description: Filter for rows to delete
+              type:
+                object_type_name: projects
+                type: predicate
+          description: Delete from projects
+          name: delete_projects
+          result_type:
+            name: delete_projects_result
+            type: named
+        - arguments:
+            objects:
+              description: Objects to insert
+              type:
+                element_type:
+                  name: time_entries_insert_input
+                  type: named
+                type: array
+            returning:
+              description: Fields to return
+              type:
+                type: nullable
+                underlying_type:
+                  element_type:
+                    name: string
+                    type: named
+                  type: array
+          description: Insert into time_entries
+          name: insert_time_entries
+          result_type:
+            name: insert_time_entries_result
+            type: named
+        - arguments:
+            returning:
+              description: Fields to return
+              type:
+                type: nullable
+                underlying_type:
+                  element_type:
+                    name: string
+                    type: named
+                  type: array
+            set:
+              description: Values to set
+              type:
+                name: time_entries_set_input
+                type: named
+            where:
+              description: Filter for rows to update
+              type:
+                object_type_name: time_entries
+                type: predicate
+          description: Update time_entries
+          name: update_time_entries
+          result_type:
+            name: update_time_entries_result
+            type: named
+        - arguments:
+            returning:
+              description: Fields to return
+              type:
+                type: nullable
+                underlying_type:
+                  element_type:
+                    name: string
+                    type: named
+                  type: array
+            where:
+              description: Filter for rows to delete
+              type:
+                object_type_name: time_entries
+                type: predicate
+          description: Delete from time_entries
+          name: delete_time_entries
+          result_type:
+            name: delete_time_entries_result
+            type: named
+        - arguments:
+            objects:
+              description: Objects to insert
+              type:
+                element_type:
+                  name: users_insert_input
+                  type: named
+                type: array
+            returning:
+              description: Fields to return
+              type:
+                type: nullable
+                underlying_type:
+                  element_type:
+                    name: string
+                    type: named
+                  type: array
+          description: Insert into users
+          name: insert_users
+          result_type:
+            name: insert_users_result
+            type: named
+        - arguments:
+            returning:
+              description: Fields to return
+              type:
+                type: nullable
+                underlying_type:
+                  element_type:
+                    name: string
+                    type: named
+                  type: array
+            set:
+              description: Values to set
+              type:
+                name: users_set_input
+                type: named
+            where:
+              description: Filter for rows to update
+              type:
+                object_type_name: users
+                type: predicate
+          description: Update users
+          name: update_users
+          result_type:
+            name: update_users_result
+            type: named
+        - arguments:
+            returning:
+              description: Fields to return
+              type:
+                type: nullable
+                underlying_type:
+                  element_type:
+                    name: string
+                    type: named
+                  type: array
+            where:
+              description: Filter for rows to delete
+              type:
+                object_type_name: users
+                type: predicate
+          description: Delete from users
+          name: delete_users
+          result_type:
+            name: delete_users_result
+            type: named
+      scalar_types:
+        bigint:
+          aggregate_functions:
+            avg:
+              result_type: decimal
+              type: average
+            max:
+              type: max
+            min:
+              type: min
+            stddev_pop:
+              result_type:
+                name: bigint
+                type: named
+              type: custom
+            stddev_samp:
+              result_type:
+                name: bigint
+                type: named
+              type: custom
+            sum:
+              result_type: bigint
+              type: sum
+            var_pop:
+              result_type:
+                name: bigint
+                type: named
+              type: custom
+            var_samp:
+              result_type:
+                name: bigint
+                type: named
+              type: custom
+          comparison_operators:
+            _eq:
+              type: equal
+            _gt:
+              type: greater_than
+            _gte:
+              type: greater_than_or_equal
+            _in:
+              type: in
+            _lt:
+              type: less_than
+            _lte:
+              type: less_than_or_equal
+            _neq:
+              argument_type:
+                name: bigint
+                type: named
+              type: custom
+          representation:
+            type: biginteger
+        boolean:
+          aggregate_functions:
+            max:
+              type: max
+            min:
+              type: min
+          comparison_operators:
+            _eq:
+              type: equal
+            _in:
+              type: in
+            _neq:
+              argument_type:
+                name: boolean
+                type: named
+              type: custom
+          representation:
+            type: boolean
+        character_varying:
+          aggregate_functions:
+            max:
+              type: max
+            min:
+              type: min
+          comparison_operators:
+            _eq:
+              type: equal
+            _gt:
+              type: greater_than
+            _gte:
+              type: greater_than_or_equal
+            _ilike:
+              type: contains_insensitive
+            _in:
+              type: in
+            _iregex:
+              argument_type:
+                name: character_varying
+                type: named
+              type: custom
+            _like:
+              type: contains
+            _lt:
+              type: less_than
+            _lte:
+              type: less_than_or_equal
+            _neq:
+              argument_type:
+                name: character_varying
+                type: named
+              type: custom
+            _nilike:
+              argument_type:
+                name: character_varying
+                type: named
+              type: custom
+            _niregex:
+              argument_type:
+                name: character_varying
+                type: named
+              type: custom
+            _nlike:
+              argument_type:
+                name: character_varying
+                type: named
+              type: custom
+            _nregex:
+              argument_type:
+                name: character_varying
+                type: named
+              type: custom
+            _regex:
+              argument_type:
+                name: character_varying
+                type: named
+              type: custom
+          representation:
+            type: string
+        date:
+          aggregate_functions:
+            max:
+              type: max
+            min:
+              type: min
+          comparison_operators:
+            _eq:
+              type: equal
+            _gt:
+              type: greater_than
+            _gte:
+              type: greater_than_or_equal
+            _in:
+              type: in
+            _lt:
+              type: less_than
+            _lte:
+              type: less_than_or_equal
+            _neq:
+              argument_type:
+                name: date
+                type: named
+              type: custom
+          representation:
+            type: date
+        decimal:
+          aggregate_functions:
+            avg:
+              result_type: decimal
+              type: average
+            max:
+              type: max
+            min:
+              type: min
+            stddev_pop:
+              result_type:
+                name: decimal
+                type: named
+              type: custom
+            stddev_samp:
+              result_type:
+                name: decimal
+                type: named
+              type: custom
+            sum:
+              result_type: decimal
+              type: sum
+            var_pop:
+              result_type:
+                name: decimal
+                type: named
+              type: custom
+            var_samp:
+              result_type:
+                name: decimal
+                type: named
+              type: custom
+          comparison_operators:
+            _eq:
+              type: equal
+            _gt:
+              type: greater_than
+            _gte:
+              type: greater_than_or_equal
+            _in:
+              type: in
+            _lt:
+              type: less_than
+            _lte:
+              type: less_than_or_equal
+            _neq:
+              argument_type:
+                name: decimal
+                type: named
+              type: custom
+          representation:
+            type: bigdecimal
+        int:
+          aggregate_functions:
+            avg:
+              result_type: decimal
+              type: average
+            max:
+              type: max
+            min:
+              type: min
+            stddev_pop:
+              result_type:
+                name: int
+                type: named
+              type: custom
+            stddev_samp:
+              result_type:
+                name: int
+                type: named
+              type: custom
+            sum:
+              result_type: bigint
+              type: sum
+            var_pop:
+              result_type:
+                name: int
+                type: named
+              type: custom
+            var_samp:
+              result_type:
+                name: int
+                type: named
+              type: custom
+          comparison_operators:
+            _eq:
+              type: equal
+            _gt:
+              type: greater_than
+            _gte:
+              type: greater_than_or_equal
+            _in:
+              type: in
+            _lt:
+              type: less_than
+            _lte:
+              type: less_than_or_equal
+            _neq:
+              argument_type:
+                name: int
+                type: named
+              type: custom
+          representation:
+            type: int32
+        integer:
+          aggregate_functions:
+            avg:
+              result_type: decimal
+              type: average
+            max:
+              type: max
+            min:
+              type: min
+            stddev_pop:
+              result_type:
+                name: integer
+                type: named
+              type: custom
+            stddev_samp:
+              result_type:
+                name: integer
+                type: named
+              type: custom
+            sum:
+              result_type: bigint
+              type: sum
+            var_pop:
+              result_type:
+                name: integer
+                type: named
+              type: custom
+            var_samp:
+              result_type:
+                name: integer
+                type: named
+              type: custom
+          comparison_operators:
+            _eq:
+              type: equal
+            _gt:
+              type: greater_than
+            _gte:
+              type: greater_than_or_equal
+            _in:
+              type: in
+            _lt:
+              type: less_than
+            _lte:
+              type: less_than_or_equal
+            _neq:
+              argument_type:
+                name: integer
+                type: named
+              type: custom
+          representation:
+            type: int32
+        string:
+          aggregate_functions:
+            max:
+              type: max
+            min:
+              type: min
+          comparison_operators:
+            _eq:
+              type: equal
+            _gt:
+              type: greater_than
+            _gte:
+              type: greater_than_or_equal
+            _ilike:
+              type: contains_insensitive
+            _in:
+              type: in
+            _iregex:
+              argument_type:
+                name: string
+                type: named
+              type: custom
+            _like:
+              type: contains
+            _lt:
+              type: less_than
+            _lte:
+              type: less_than_or_equal
+            _neq:
+              argument_type:
+                name: string
+                type: named
+              type: custom
+            _nilike:
+              argument_type:
+                name: string
+                type: named
+              type: custom
+            _niregex:
+              argument_type:
+                name: string
+                type: named
+              type: custom
+            _nlike:
+              argument_type:
+                name: string
+                type: named
+              type: custom
+            _nregex:
+              argument_type:
+                name: string
+                type: named
+              type: custom
+            _regex:
+              argument_type:
+                name: string
+                type: named
+              type: custom
+          representation:
+            type: string
+        text:
+          aggregate_functions:
+            max:
+              type: max
+            min:
+              type: min
+          comparison_operators:
+            _eq:
+              type: equal
+            _gt:
+              type: greater_than
+            _gte:
+              type: greater_than_or_equal
+            _ilike:
+              type: contains_insensitive
+            _in:
+              type: in
+            _iregex:
+              argument_type:
+                name: text
+                type: named
+              type: custom
+            _like:
+              type: contains
+            _lt:
+              type: less_than
+            _lte:
+              type: less_than_or_equal
+            _neq:
+              argument_type:
+                name: text
+                type: named
+              type: custom
+            _nilike:
+              argument_type:
+                name: text
+                type: named
+              type: custom
+            _niregex:
+              argument_type:
+                name: text
+                type: named
+              type: custom
+            _nlike:
+              argument_type:
+                name: text
+                type: named
+              type: custom
+            _nregex:
+              argument_type:
+                name: text
+                type: named
+              type: custom
+            _regex:
+              argument_type:
+                name: text
+                type: named
+              type: custom
+          representation:
+            type: string
+        timestamp_without_time_zone:
+          aggregate_functions:
+            max:
+              type: max
+            min:
+              type: min
+          comparison_operators:
+            _eq:
+              type: equal
+            _gt:
+              type: greater_than
+            _gte:
+              type: greater_than_or_equal
+            _in:
+              type: in
+            _lt:
+              type: less_than
+            _lte:
+              type: less_than_or_equal
+            _neq:
+              argument_type:
+                name: timestamp_without_time_zone
+                type: named
+              type: custom
+          representation:
+            type: timestamp
+    capabilities:
+      capabilities:
+        mutation:
+          explain: {}
+          transactional: {}
+        query:
+          aggregates:
+            filter_by: {}
+          exists: {}
+          explain: {}
+          nested_fields: {}
+          variables: {}
+        relational_query:
+          aggregate:
+            expression:
+              aggregate:
+                approx_distinct: {}
+                approx_percentile_cont: {}
+                avg: {}
+                bool_and: {}
+                bool_or: {}
+                count:
+                  distinct: {}
+                first_value: {}
+                last_value: {}
+                max: {}
+                median: {}
+                min: {}
+                stddev: {}
+                stddev_pop: {}
+                string_agg: {}
+                sum: {}
+                var: {}
+              comparison:
+                between: {}
+                contains: {}
+                greater_than: {}
+                greater_than_eq: {}
+                ilike: {}
+                in_list: {}
+                is_false: {}
+                is_nan: {}
+                is_null: {}
+                is_true: {}
+                is_zero: {}
+                less_than: {}
+                less_than_eq: {}
+                like: {}
+              conditional:
+                case: {}
+                nullif: {}
+              scalar:
+                abs: {}
+                and: {}
+                array_element: {}
+                binary_concat: {}
+                btrim: {}
+                ceil: {}
+                character_length: {}
+                coalesce: {}
+                concat: {}
+                cos: {}
+                current_date: {}
+                current_time: {}
+                current_timestamp: {}
+                date_part:
+                  day: {}
+                  day_of_week: {}
+                  day_of_year: {}
+                  epoch: {}
+                  hour: {}
+                  microsecond: {}
+                  millisecond: {}
+                  minute: {}
+                  month: {}
+                  nanosecond: {}
+                  quarter: {}
+                  second: {}
+                  week: {}
+                  year: {}
+                date_trunc: {}
+                divide: {}
+                exp: {}
+                floor: {}
+                get_field: {}
+                greatest: {}
+                least: {}
+                left: {}
+                ln: {}
+                log: {}
+                log2: {}
+                log10: {}
+                lpad: {}
+                ltrim: {}
+                minus: {}
+                modulo: {}
+                multiply: {}
+                negate: {}
+                not: {}
+                nvl: {}
+                or: {}
+                plus: {}
+                power: {}
+                random: {}
+                replace: {}
+                reverse: {}
+                right: {}
+                round: {}
+                rpad: {}
+                rtrim: {}
+                sqrt: {}
+                str_pos: {}
+                substr: {}
+                substr_index: {}
+                tan: {}
+                to_date: {}
+                to_lower: {}
+                to_timestamp: {}
+                to_upper: {}
+                trunc: {}
+              scalar_types:
+                from_type: {}
+                interval: {}
+              window:
+                cume_dist: {}
+                dense_rank: {}
+                ntile: {}
+                percent_rank: {}
+                rank: {}
+                row_number: {}
+            group_by: {}
+          filter:
+            aggregate:
+              approx_distinct: {}
+              approx_percentile_cont: {}
+              avg: {}
+              bool_and: {}
+              bool_or: {}
+              count:
+                distinct: {}
+              first_value: {}
+              last_value: {}
+              max: {}
+              median: {}
+              min: {}
+              stddev: {}
+              stddev_pop: {}
+              string_agg: {}
+              sum: {}
+              var: {}
+            comparison:
+              between: {}
+              contains: {}
+              greater_than: {}
+              greater_than_eq: {}
+              ilike: {}
+              in_list: {}
+              is_false: {}
+              is_nan: {}
+              is_null: {}
+              is_true: {}
+              is_zero: {}
+              less_than: {}
+              less_than_eq: {}
+              like: {}
+            conditional:
+              case: {}
+              nullif: {}
+            scalar:
+              abs: {}
+              and: {}
+              array_element: {}
+              binary_concat: {}
+              btrim: {}
+              ceil: {}
+              character_length: {}
+              coalesce: {}
+              concat: {}
+              cos: {}
+              current_date: {}
+              current_time: {}
+              current_timestamp: {}
+              date_part:
+                day: {}
+                day_of_week: {}
+                day_of_year: {}
+                epoch: {}
+                hour: {}
+                microsecond: {}
+                millisecond: {}
+                minute: {}
+                month: {}
+                nanosecond: {}
+                quarter: {}
+                second: {}
+                week: {}
+                year: {}
+              date_trunc: {}
+              divide: {}
+              exp: {}
+              floor: {}
+              get_field: {}
+              greatest: {}
+              least: {}
+              left: {}
+              ln: {}
+              log: {}
+              log2: {}
+              log10: {}
+              lpad: {}
+              ltrim: {}
+              minus: {}
+              modulo: {}
+              multiply: {}
+              negate: {}
+              not: {}
+              nvl: {}
+              or: {}
+              plus: {}
+              power: {}
+              random: {}
+              replace: {}
+              reverse: {}
+              right: {}
+              round: {}
+              rpad: {}
+              rtrim: {}
+              sqrt: {}
+              str_pos: {}
+              substr: {}
+              substr_index: {}
+              tan: {}
+              to_date: {}
+              to_lower: {}
+              to_timestamp: {}
+              to_upper: {}
+              trunc: {}
+            scalar_types:
+              from_type: {}
+              interval: {}
+            window:
+              cume_dist: {}
+              dense_rank: {}
+              ntile: {}
+              percent_rank: {}
+              rank: {}
+              row_number: {}
+          join:
+            expression:
+              aggregate:
+                approx_distinct: {}
+                approx_percentile_cont: {}
+                avg: {}
+                bool_and: {}
+                bool_or: {}
+                count:
+                  distinct: {}
+                first_value: {}
+                last_value: {}
+                max: {}
+                median: {}
+                min: {}
+                stddev: {}
+                stddev_pop: {}
+                string_agg: {}
+                sum: {}
+                var: {}
+              comparison:
+                between: {}
+                contains: {}
+                greater_than: {}
+                greater_than_eq: {}
+                ilike: {}
+                in_list: {}
+                is_false: {}
+                is_nan: {}
+                is_null: {}
+                is_true: {}
+                is_zero: {}
+                less_than: {}
+                less_than_eq: {}
+                like: {}
+              conditional:
+                case: {}
+                nullif: {}
+              scalar:
+                abs: {}
+                and: {}
+                array_element: {}
+                binary_concat: {}
+                btrim: {}
+                ceil: {}
+                character_length: {}
+                coalesce: {}
+                concat: {}
+                cos: {}
+                current_date: {}
+                current_time: {}
+                current_timestamp: {}
+                date_part:
+                  day: {}
+                  day_of_week: {}
+                  day_of_year: {}
+                  epoch: {}
+                  hour: {}
+                  microsecond: {}
+                  millisecond: {}
+                  minute: {}
+                  month: {}
+                  nanosecond: {}
+                  quarter: {}
+                  second: {}
+                  week: {}
+                  year: {}
+                date_trunc: {}
+                divide: {}
+                exp: {}
+                floor: {}
+                get_field: {}
+                greatest: {}
+                least: {}
+                left: {}
+                ln: {}
+                log: {}
+                log2: {}
+                log10: {}
+                lpad: {}
+                ltrim: {}
+                minus: {}
+                modulo: {}
+                multiply: {}
+                negate: {}
+                not: {}
+                nvl: {}
+                or: {}
+                plus: {}
+                power: {}
+                random: {}
+                replace: {}
+                reverse: {}
+                right: {}
+                round: {}
+                rpad: {}
+                rtrim: {}
+                sqrt: {}
+                str_pos: {}
+                substr: {}
+                substr_index: {}
+                tan: {}
+                to_date: {}
+                to_lower: {}
+                to_timestamp: {}
+                to_upper: {}
+                trunc: {}
+              scalar_types:
+                from_type: {}
+                interval: {}
+              window:
+                cume_dist: {}
+                dense_rank: {}
+                ntile: {}
+                percent_rank: {}
+                rank: {}
+                row_number: {}
+            join_types:
+              full: {}
+              inner: {}
+              left: {}
+              left_anti: {}
+              left_semi: {}
+              right: {}
+              right_anti: {}
+              right_semi: {}
+          project:
+            expression:
+              aggregate:
+                approx_distinct: {}
+                approx_percentile_cont: {}
+                avg: {}
+                bool_and: {}
+                bool_or: {}
+                count:
+                  distinct: {}
+                first_value: {}
+                last_value: {}
+                max: {}
+                median: {}
+                min: {}
+                stddev: {}
+                stddev_pop: {}
+                string_agg: {}
+                sum: {}
+                var: {}
+              comparison:
+                between: {}
+                contains: {}
+                greater_than: {}
+                greater_than_eq: {}
+                ilike: {}
+                in_list: {}
+                is_false: {}
+                is_nan: {}
+                is_null: {}
+                is_true: {}
+                is_zero: {}
+                less_than: {}
+                less_than_eq: {}
+                like: {}
+              conditional:
+                case: {}
+                nullif: {}
+              scalar:
+                abs: {}
+                and: {}
+                array_element: {}
+                binary_concat: {}
+                btrim: {}
+                ceil: {}
+                character_length: {}
+                coalesce: {}
+                concat: {}
+                cos: {}
+                current_date: {}
+                current_time: {}
+                current_timestamp: {}
+                date_part:
+                  day: {}
+                  day_of_week: {}
+                  day_of_year: {}
+                  epoch: {}
+                  hour: {}
+                  microsecond: {}
+                  millisecond: {}
+                  minute: {}
+                  month: {}
+                  nanosecond: {}
+                  quarter: {}
+                  second: {}
+                  week: {}
+                  year: {}
+                date_trunc: {}
+                divide: {}
+                exp: {}
+                floor: {}
+                get_field: {}
+                greatest: {}
+                least: {}
+                left: {}
+                ln: {}
+                log: {}
+                log2: {}
+                log10: {}
+                lpad: {}
+                ltrim: {}
+                minus: {}
+                modulo: {}
+                multiply: {}
+                negate: {}
+                not: {}
+                nvl: {}
+                or: {}
+                plus: {}
+                power: {}
+                random: {}
+                replace: {}
+                reverse: {}
+                right: {}
+                round: {}
+                rpad: {}
+                rtrim: {}
+                sqrt: {}
+                str_pos: {}
+                substr: {}
+                substr_index: {}
+                tan: {}
+                to_date: {}
+                to_lower: {}
+                to_timestamp: {}
+                to_upper: {}
+                trunc: {}
+              scalar_types:
+                from_type: {}
+                interval: {}
+              window:
+                cume_dist: {}
+                dense_rank: {}
+                ntile: {}
+                percent_rank: {}
+                rank: {}
+                row_number: {}
+          sort:
+            expression:
+              aggregate:
+                approx_distinct: {}
+                approx_percentile_cont: {}
+                avg: {}
+                bool_and: {}
+                bool_or: {}
+                count:
+                  distinct: {}
+                first_value: {}
+                last_value: {}
+                max: {}
+                median: {}
+                min: {}
+                stddev: {}
+                stddev_pop: {}
+                string_agg: {}
+                sum: {}
+                var: {}
+              comparison:
+                between: {}
+                contains: {}
+                greater_than: {}
+                greater_than_eq: {}
+                ilike: {}
+                in_list: {}
+                is_false: {}
+                is_nan: {}
+                is_null: {}
+                is_true: {}
+                is_zero: {}
+                less_than: {}
+                less_than_eq: {}
+                like: {}
+              conditional:
+                case: {}
+                nullif: {}
+              scalar:
+                abs: {}
+                and: {}
+                array_element: {}
+                binary_concat: {}
+                btrim: {}
+                ceil: {}
+                character_length: {}
+                coalesce: {}
+                concat: {}
+                cos: {}
+                current_date: {}
+                current_time: {}
+                current_timestamp: {}
+                date_part:
+                  day: {}
+                  day_of_week: {}
+                  day_of_year: {}
+                  epoch: {}
+                  hour: {}
+                  microsecond: {}
+                  millisecond: {}
+                  minute: {}
+                  month: {}
+                  nanosecond: {}
+                  quarter: {}
+                  second: {}
+                  week: {}
+                  year: {}
+                date_trunc: {}
+                divide: {}
+                exp: {}
+                floor: {}
+                get_field: {}
+                greatest: {}
+                least: {}
+                left: {}
+                ln: {}
+                log: {}
+                log2: {}
+                log10: {}
+                lpad: {}
+                ltrim: {}
+                minus: {}
+                modulo: {}
+                multiply: {}
+                negate: {}
+                not: {}
+                nvl: {}
+                or: {}
+                plus: {}
+                power: {}
+                random: {}
+                replace: {}
+                reverse: {}
+                right: {}
+                round: {}
+                rpad: {}
+                rtrim: {}
+                sqrt: {}
+                str_pos: {}
+                substr: {}
+                substr_index: {}
+                tan: {}
+                to_date: {}
+                to_lower: {}
+                to_timestamp: {}
+                to_upper: {}
+                trunc: {}
+              scalar_types:
+                from_type: {}
+                interval: {}
+              window:
+                cume_dist: {}
+                dense_rank: {}
+                ntile: {}
+                percent_rank: {}
+                rank: {}
+                row_number: {}
+          union: {}
+          window:
+            expression:
+              aggregate:
+                approx_distinct: {}
+                approx_percentile_cont: {}
+                avg: {}
+                bool_and: {}
+                bool_or: {}
+                count:
+                  distinct: {}
+                first_value: {}
+                last_value: {}
+                max: {}
+                median: {}
+                min: {}
+                stddev: {}
+                stddev_pop: {}
+                string_agg: {}
+                sum: {}
+                var: {}
+              comparison:
+                between: {}
+                contains: {}
+                greater_than: {}
+                greater_than_eq: {}
+                ilike: {}
+                in_list: {}
+                is_false: {}
+                is_nan: {}
+                is_null: {}
+                is_true: {}
+                is_zero: {}
+                less_than: {}
+                less_than_eq: {}
+                like: {}
+              conditional:
+                case: {}
+                nullif: {}
+              scalar:
+                abs: {}
+                and: {}
+                array_element: {}
+                binary_concat: {}
+                btrim: {}
+                ceil: {}
+                character_length: {}
+                coalesce: {}
+                concat: {}
+                cos: {}
+                current_date: {}
+                current_time: {}
+                current_timestamp: {}
+                date_part:
+                  day: {}
+                  day_of_week: {}
+                  day_of_year: {}
+                  epoch: {}
+                  hour: {}
+                  microsecond: {}
+                  millisecond: {}
+                  minute: {}
+                  month: {}
+                  nanosecond: {}
+                  quarter: {}
+                  second: {}
+                  week: {}
+                  year: {}
+                date_trunc: {}
+                divide: {}
+                exp: {}
+                floor: {}
+                get_field: {}
+                greatest: {}
+                least: {}
+                left: {}
+                ln: {}
+                log: {}
+                log2: {}
+                log10: {}
+                lpad: {}
+                ltrim: {}
+                minus: {}
+                modulo: {}
+                multiply: {}
+                negate: {}
+                not: {}
+                nvl: {}
+                or: {}
+                plus: {}
+                power: {}
+                random: {}
+                replace: {}
+                reverse: {}
+                right: {}
+                round: {}
+                rpad: {}
+                rtrim: {}
+                sqrt: {}
+                str_pos: {}
+                substr: {}
+                substr_index: {}
+                tan: {}
+                to_date: {}
+                to_lower: {}
+                to_timestamp: {}
+                to_upper: {}
+                trunc: {}
+              scalar_types:
+                from_type: {}
+                interval: {}
+              window:
+                cume_dist: {}
+                dense_rank: {}
+                ntile: {}
+                percent_rank: {}
+                rank: {}
+                row_number: {}
+      version: 0.2.9
