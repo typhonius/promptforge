@@ -9,6 +9,7 @@ class TeamComponent {
 
     init() {
         this.setupEventListeners();
+        this.showInitialMessage();
         // Don't automatically load team data - let the app controller handle this
     }
 
@@ -35,6 +36,19 @@ class TeamComponent {
             this.renderError(error);
         } finally {
             hideLoading();
+        }
+    }
+
+    showInitialMessage() {
+        const container = document.getElementById('team-list');
+        if (container) {
+            container.innerHTML = `
+                <div class="text-center" style="grid-column: 1 / -1; padding: 3rem; color: #64748b;">
+                    <i class="fas fa-users" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                    <h3>Select a team member to track time</h3>
+                    <p>Choose a team member from the dropdown above to see their weekly time entries.</p>
+                </div>
+            `;
         }
     }
 
