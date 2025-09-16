@@ -182,9 +182,6 @@ router.put('/:id', async (req, res) => {
       arr_value,
       close_date,
       start_date,
-      risk_description,
-      ask_description,
-      impact_description,
       is_closed,
       changed_by,
       health_change_reason
@@ -216,14 +213,11 @@ router.put('/:id', async (req, res) => {
         arr_value = COALESCE($7, arr_value),
         close_date = COALESCE($8, close_date),
         start_date = COALESCE($9, start_date),
-        risk_description = COALESCE($10, risk_description),
-        ask_description = COALESCE($11, ask_description),
-        impact_description = COALESCE($12, impact_description),
-        is_closed = COALESCE($13, is_closed),
+        is_closed = COALESCE($10, is_closed),
         updated_at = CURRENT_TIMESTAMP
-      WHERE id = $14
+      WHERE id = $11
       RETURNING *
-    `, [project_name, tier1_owner_id, tier2_owner_id, tier3_owners, status, health, arr_value, close_date, start_date, risk_description, ask_description, impact_description, is_closed, id]);
+    `, [project_name, tier1_owner_id, tier2_owner_id, tier3_owners, status, health, arr_value, close_date, start_date, is_closed, id]);
 
     // Add health history entry if health changed
     if (health && health !== currentProject.rows[0].health) {
