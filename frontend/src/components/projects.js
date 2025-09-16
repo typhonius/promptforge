@@ -730,7 +730,7 @@ class ProjectsComponent {
                         <option value="">Select User</option>
                         ${this.users
                             .filter(user => user.is_active)
-                            .map(user => `<option value="${user.id}">${user.first_name} ${user.last_name}</option>`)
+                            .map(user => `<option value="${user.id}" ${user.id === 1 ? 'selected' : ''}>${user.first_name} ${user.last_name}</option>`)
                             .join('')
                         }
                     </select>
