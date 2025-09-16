@@ -773,6 +773,95 @@ body {
     text-transform: uppercase;
 }
 
+/* Team Status and Tier Badges */
+.team-status {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+.status-badge.active {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status-badge.inactive {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.tier-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+}
+
+.tier-badge.tier-1 {
+    background: var(--color-primary);
+    color: #1a1a1a;
+}
+
+.tier-badge.tier-2 {
+    background: var(--color-secondary);
+    color: white;
+}
+
+.tier-badge.tier-3 {
+    background: var(--color-accent);
+    color: white;
+}
+
+/* Team Actions */
+.team-actions {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.team-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin-bottom: 1rem;
+    font-size: 0.75rem;
+    color: #666666;
+}
+
+.meta-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.meta-label {
+    font-weight: 600;
+}
+
+.meta-value {
+    color: #1a1a1a;
+}
+
 /* Modal */
 .modal-overlay {
     position: fixed;
