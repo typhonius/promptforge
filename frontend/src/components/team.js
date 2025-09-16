@@ -74,9 +74,10 @@ class TeamComponent {
             const initials = `${user.first_name.charAt(0)}${user.last_name.charAt(0)}`.toUpperCase();
             const statusClass = user.is_active ? 'active' : 'inactive';
             const statusText = user.is_active ? 'Active' : 'Inactive';
+            const tierText = user.tier === 1 ? 'T1' : user.tier === 2 ? 'T2' : 'T3';
 
             return `
-                <div class="team-card ${statusClass}" onclick="team.viewTeamMember(${user.id})">
+                <div class="team-card ${statusClass}">
                     <div class="team-avatar">
                         ${initials}
                     </div>
@@ -86,6 +87,7 @@ class TeamComponent {
 
                     <div class="team-status">
                         <span class="status-badge ${statusClass}">${statusText}</span>
+                        <span class="tier-badge tier-${user.tier}">${tierText}</span>
                     </div>
 
                     <div class="team-meta">
@@ -623,6 +625,15 @@ class TeamComponent {
                 </div>
 
                 <div class="form-group">
+                    <label class="form-label">Tier</label>
+                    <select class="form-select" name="tier">
+                        <option value="2" ${user.tier === 2 ? 'selected' : ''}>T2</option>
+                        <option value="1" ${user.tier === 1 ? 'selected' : ''}>T1</option>
+                        <option value="3" ${user.tier === 3 ? 'selected' : ''}>T3</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
                     <label class="form-label">First Name *</label>
                     <input type="text" class="form-input" name="first_name" value="${user.first_name}" required>
                 </div>
@@ -651,6 +662,30 @@ class TeamComponent {
                     margin-top: 0.25rem;
                     font-size: 0.75rem;
                     color: #6b7280;
+                }
+
+                .tier-badge {
+                    padding: 0.25rem 0.5rem;
+                    border-radius: 12px;
+                    font-size: 0.75rem;
+                    font-weight: 600;
+                    text-transform: uppercase;
+                    margin-left: 0.5rem;
+                }
+
+                .tier-badge.tier-1 {
+                    background: #fef3c7;
+                    color: #92400e;
+                }
+
+                .tier-badge.tier-2 {
+                    background: #dbeafe;
+                    color: #1e40af;
+                }
+
+                .tier-badge.tier-3 {
+                    background: #f3e8ff;
+                    color: #7c3aed;
                 }
             </style>
         `;
@@ -681,6 +716,8 @@ class TeamComponent {
         for (let [key, value] of formData.entries()) {
             if (key === 'is_active') {
                 userData[key] = true;
+            } else if (key === 'tier') {
+                userData[key] = parseInt(value);
             } else if (value) {
                 userData[key] = value;
             }

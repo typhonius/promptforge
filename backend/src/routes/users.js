@@ -68,7 +68,7 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { first_name, last_name, email, is_active } = req.body;
+    const { first_name, last_name, email, is_active, tier } = req.body;
 
     const result = await db.query(`
       UPDATE users
@@ -76,10 +76,11 @@ router.put('/:id', async (req, res) => {
           last_name = COALESCE($2, last_name),
           email = COALESCE($3, email),
           is_active = COALESCE($4, is_active),
+          tier = COALESCE($5, tier),
           updated_at = CURRENT_TIMESTAMP
-      WHERE id = $5
-      RETURNING id, first_name, last_name, email, is_active, created_at, updated_at
-    `, [first_name, last_name, email, is_active, id]);
+      WHERE id = $6
+      RETURNING id, first_name, last_name, email, tier, is_active, created_at, updated_at
+    `, [first_name, last_name, email, is_active, tier, id]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'User not found' });
