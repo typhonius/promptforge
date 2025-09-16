@@ -144,8 +144,8 @@ class ProjectsComponent {
                         <button class="btn btn-sm btn-secondary" onclick="projects.addNote(${project.id})">
                             <i class="fas fa-comment-plus"></i> Add Note
                         </button>
-                        <button class="btn btn-sm btn-danger" onclick="projects.deleteProject(${project.id})">
-                            <i class="fas fa-trash"></i> Delete
+                        <button class="btn btn-sm btn-warning" onclick="projects.closeProject(${project.id})">
+                            <i class="fas fa-times-circle"></i> Close
                         </button>
                     </div>
                 </div>
@@ -789,19 +789,20 @@ class ProjectsComponent {
         }
     }
 
-    async deleteProject(projectId) {
-        if (!confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
+    async closeProject(projectId) {
+        if (!confirm('Are you sure you want to close this project? This will mark it as completed.')) {
             return;
         }
 
         try {
             showLoading();
-            await api.deleteProject(projectId);
+            // Update project status to 'completed' instead of deleting
+            await api.updateProject(projectId, { status: 'completed' });
             this.loadProjects();
-            this.showSuccess('Project deleted successfully!');
+            this.showSuccess('Project closed successfully!');
         } catch (error) {
-            console.error('Failed to delete project:', error);
-            this.showError('Failed to delete project. Please try again.');
+            console.error('Failed to close project:', error);
+            this.showError('Failed to close project. Please try again.');
         } finally {
             hideLoading();
         }
