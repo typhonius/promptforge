@@ -104,16 +104,8 @@ router.get('/:id', async (req, res) => {
       ORDER BY pn.created_at DESC
     `, [id]);
 
-    // Get custom fields
-    const fieldsResult = await db.query(`
-      SELECT field_name, field_value, field_type
-      FROM project_custom_fields
-      WHERE project_id = $1
-    `, [id]);
-
     const project = result.rows[0];
     project.notes = notesResult.rows;
-    project.custom_fields = fieldsResult.rows;
 
     res.json(project);
   } catch (error) {

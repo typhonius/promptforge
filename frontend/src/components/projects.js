@@ -268,19 +268,6 @@ class ProjectsComponent {
                     </div>
                 `}
 
-                ${project.custom_fields && project.custom_fields.length > 0 ? `
-                    <div class="custom-fields-section">
-                        <h4>Additional Information</h4>
-                        <div class="custom-fields-grid">
-                            ${project.custom_fields.map(field => `
-                                <div class="meta-item">
-                                    <label>${field.field_name}:</label>
-                                    <span>${field.field_value}</span>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                ` : ''}
             </div>
 
             <style>
