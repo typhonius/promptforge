@@ -16,7 +16,7 @@ class OpenAIService {
                 messages: [
                     {
                         role: "system",
-                        content: "You are an expert project management analyst. Generate executive reports in the exact format provided, using the project data to create risk assessments, asks, and impact statements. Format the output to be ready for pasting into Slack."
+                        content: "You are an executive project analyst generating C-level status reports. Write from the perspective of a Director reporting to senior executives (COO, VP Sales, VP GTM). Prioritize business impact, revenue risk, resource bottlenecks, and actionable decisions. Use data-driven insights with specific financial figures. Identify critical blockers requiring executive intervention and propose concrete solutions with clear ownership."
                     },
                     {
                         role: "user",
@@ -66,32 +66,46 @@ Owners: ${[project.tier_1_name, project.tier_2_name].filter(name => name).join('
             tierBreakdown = tierInfo.length > 0 ? '\n' + tierInfo.join('\n') : '';
         }
 
-        return `Generate an executive project health report in the exact format below. Use the project data provided to create realistic risk assessments, actionable asks, and business impact statements.
+        return `Create an executive status report for VP/COO audience. Analyze project data to identify risks, specific asks, and business impacts.
 
-REQUIRED FORMAT (copy exactly, replace content):
-Project Health
-:large_green_circle: [Project Name] ($[ARR]K ARR, closes [date])
-risk: [Specific risk based on project health, notes, and status]
-ask: [Specific actionable request with owner names from the data]
-impact: [Business impact if risk materializes or ask is fulfilled]
+CRITICAL REQUIREMENTS:
+For each project, provide exactly three elements:
+- RISK: Specific threat to delivery, revenue, or operations based on health status and notes
+- ASK: Concrete action item with named executive owner (COO for resources/infrastructure, VP Sales for adoption/customer issues)
+- IMPACT: Quantified business consequence (ARR at risk, timeline delays, operational costs)
 
-[Repeat for each project with appropriate emoji based on health: :large_green_circle: for green, :large_yellow_circle: for yellow, :warning: for red]
+REPORT STRUCTURE:
+1. **Project Health Dashboard**
+   - Use 🟢🟡🔴 based on health status
+   - Each project must have: Risk + Ask + Impact
 
-:warning: Cross-cutting Risks
-[Any systemic risks that affect multiple projects]
+2. **Cross-Cutting Risks**
+   - Identify systemic issues affecting multiple projects
+   - Focus on: engineering bottlenecks, resource constraints, process gaps, technology dependencies
 
-:fast_forward: Capacity / Resourcing
-FDE utilization at ${utilizationRate}${tierBreakdown}
+3. **Capacity & Resource Analysis**
+   - Current utilization: ${utilizationRate}${tierBreakdown}
+   - Engineering dependencies blocking progress
+   - Resource gaps requiring executive action
+
+4. **Executive Actions Required**
+   - Immediate decisions needed from COO and VP Sales
+   - 30-day milestones with success metrics
+
+ANALYSIS GUIDELINES:
+- Red projects = high revenue risk, immediate executive intervention needed
+- Yellow projects = delivery risk, resource/process asks required
+- Green projects = on track, but identify optimization opportunities
+- Cross-cutting risks = patterns affecting multiple projects (shared dependencies, resource conflicts, process breakdowns)
 
 PROJECT DATA:
 ${projectsText}
 
 CAPACITY DATA:
-Team Utilization: ${utilizationRate}${tierBreakdown}
+Team utilization: ${utilizationRate}${tierBreakdown}
+Report period: ${reportPeriod ? `${reportPeriod.start_date} to ${reportPeriod.end_date}` : 'Current week'}
 
-REPORT PERIOD: ${reportPeriod ? `${reportPeriod.start_date} to ${reportPeriod.end_date}` : 'Current week'}
-
-Generate the report now, ensuring each project has a realistic risk, ask, and impact based on its health status and latest notes. Use the capacity data from the specified report period.`;
+Generate a strategic report with specific risks, actionable asks, and quantified impacts for each project, plus cross-cutting risks affecting multiple initiatives.`;
     }
 }
 
