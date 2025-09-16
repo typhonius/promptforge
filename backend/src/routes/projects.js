@@ -13,6 +13,17 @@ router.get('/', async (req, res) => {
         u1.first_name || ' ' || u1.last_name as tier_1_name,
         u2.first_name || ' ' || u2.last_name as tier_2_name,
         COALESCE(
+          (SELECT STRING_AGG(u3.first_name || ' ' || u3.last_name, ', ')
+           FROM users u3
+           WHERE u3.id = ANY(
+             SELECT CAST(value AS INTEGER)
+             FROM json_array_elements_text(COALESCE(p.tier3_owners, '[]')::json) AS value
+             WHERE value ~ '^[0-9]+$'
+           )
+           AND u3.is_active = true),
+          ''
+        ) as tier_3_names,
+        COALESCE(
           (SELECT note_text FROM project_notes pn
            WHERE pn.project_id = p.id
            ORDER BY pn.created_at DESC LIMIT 1),
@@ -60,7 +71,18 @@ router.get('/:id', async (req, res) => {
       SELECT
         p.*,
         u1.first_name || ' ' || u1.last_name as tier_1_name,
-        u2.first_name || ' ' || u2.last_name as tier_2_name
+        u2.first_name || ' ' || u2.last_name as tier_2_name,
+        COALESCE(
+          (SELECT STRING_AGG(u3.first_name || ' ' || u3.last_name, ', ')
+           FROM users u3
+           WHERE u3.id = ANY(
+             SELECT CAST(value AS INTEGER)
+             FROM json_array_elements_text(COALESCE(p.tier3_owners, '[]')::json) AS value
+             WHERE value ~ '^[0-9]+$'
+           )
+           AND u3.is_active = true),
+          ''
+        ) as tier_3_names
       FROM projects p
       LEFT JOIN users u1 ON p.tier1_owner_id = u1.id
       LEFT JOIN users u2 ON p.tier2_owner_id = u2.id

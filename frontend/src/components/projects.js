@@ -102,23 +102,9 @@ class ProjectsComponent {
             // Get tier names
             const tier1Name = project.tier_1_name || '';
             const tier2Name = project.tier_2_name || '';
+            const tier3Names = project.tier_3_names || '';
 
-            // Handle multiple tier 3 names
-            let tier3Names = [];
-            if (project.tier3_owners) {
-                try {
-                    const tier3_ids = JSON.parse(project.tier3_owners);
-                    tier3Names = tier3_ids.map(id => {
-                        const user = this.users.find(u => u.id === id);
-                        return user ? `${user.first_name} ${user.last_name}` : null;
-                    }).filter(name => name);
-                } catch (e) {
-                    console.error('Error parsing tier3_owners:', e);
-                }
-            }
-
-            const tier3Display = tier3Names.length > 0 ? tier3Names.join(', ') : '';
-            const tierDisplay = [tier1Name, tier2Name, tier3Display].filter(name => name).join(' | ') || 'No tiers assigned';
+            const tierDisplay = [tier1Name, tier2Name, tier3Names].filter(name => name).join(' | ') || 'No tiers assigned';
 
             return `
                 <div class="project-card" onclick="projects.viewProject(${project.id})">
@@ -230,23 +216,7 @@ class ProjectsComponent {
                     </div>
                     <div class="meta-item">
                         <label>Tier 3:</label>
-                        <span>${(() => {
-                            if (project.tier3_owners) {
-                                try {
-                                    const tier3_array = JSON.parse(project.tier3_owners);
-                                    if (tier3_array.length > 0) {
-                                        const tier3Names = tier3_array.map(id => {
-                                            const user = this.users.find(u => u.id === id);
-                                            return user ? `${user.first_name} ${user.last_name}` : null;
-                                        }).filter(name => name);
-                                        return tier3Names.length > 0 ? tier3Names.join(', ') : 'Not assigned';
-                                    }
-                                } catch (e) {
-                                    console.error('Error parsing tier3_owners:', e);
-                                }
-                            }
-                            return 'Not assigned';
-                        })()}</span>
+                        <span>${project.tier_3_names || 'Not assigned'}</span>
                     </div>
                     <div class="meta-item">
                         <label>Status:</label>
