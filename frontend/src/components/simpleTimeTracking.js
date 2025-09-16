@@ -19,6 +19,9 @@ class SimpleTimeTrackingComponent {
         await this.loadUsers();
         if (this.currentUser) {
             this.loadWeekView();
+        } else {
+            // Show the "select team member" message when no user is selected
+            this.clearWeekView();
         }
     }
 
